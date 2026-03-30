@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   FaHome, FaUser, FaTrophy, FaProjectDiagram, FaDownload, FaMoon, FaSun,
   FaCalendarAlt, FaBriefcase, FaCertificate, FaCode, FaLaptopCode, FaChartLine,
-  FaBars, FaTimes, FaArrowUp, FaEnvelope, FaPhoneAlt, FaMapMarkerAlt
+  FaBars, FaTimes, FaArrowUp, FaComments, FaPaperPlane
 } from 'react-icons/fa'
 
 import { Splide, SplideSlide } from '@splidejs/react-splide'
 import '@splidejs/react-splide/css'
+
+import { emersonContext } from './aiContext';
 
 import profile from './assets/profile.jpg'
 import html from './assets/html.png'
@@ -29,6 +31,11 @@ import splide2 from './assets/splide2.jpg'
 import splide3 from './assets/splide3.jpg'
 
 import './App.css'
+import { GoogleGenerativeAI } from "@google/generative-ai"
+
+// Initialize Gemini with API key from .env file
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash" });
 
 function App() {
   const [darkMode, setDarkMode] = useState(false)
@@ -40,6 +47,14 @@ function App() {
   const [isDeleting, setIsDeleting] = useState(false)
   const [currentDate, setCurrentDate] = useState('')
 
+  const [chatOpen, setChatOpen] = useState(false)
+  const [messages, setMessages] = useState([
+    { role: 'ai', text: "Hi! I'm Emerson's AI assistant. How can I help you today?" }
+  ])
+  const [userInput, setUserInput] = useState('')
+  const [isTyping, setIsTyping] = useState(false)
+  const chatEndRef = useRef(null)
+
   const texts = [
     'Hey, Welcome to my portfolio',
     'Explore my work and ideas',
@@ -49,7 +64,7 @@ function App() {
   const careerStats = [
     { label: 'Experience', value: 0, icon: FaBriefcase, unit: ' years', color: 'text-blue-500', bgColor: 'bg-blue-100', darkBgColor: 'bg-blue-900/30' },
     { label: 'Certificates', value: 0, icon: FaCertificate, unit: '', color: 'text-green-500', bgColor: 'bg-green-100', darkBgColor: 'bg-green-900/30' },
-    { label: 'Projects', value: 4, icon: FaProjectDiagram, unit: '', color: 'text-purple-500', bgColor: 'bg-purple-100', darkBgColor: 'bg-purple-900/30' },
+    { label: 'Projects', value: 5, icon: FaProjectDiagram, unit: '', color: 'text-purple-500', bgColor: 'bg-purple-100', darkBgColor: 'bg-purple-900/30' },
     { label: 'Technologies', value: 14, icon: FaLaptopCode, unit: '+', color: 'text-orange-500', bgColor: 'bg-orange-100', darkBgColor: 'bg-orange-900/30' }
   ]
 
@@ -60,6 +75,11 @@ function App() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  // Auto-scroll chat to bottom
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
 
   const goToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 
@@ -88,6 +108,30 @@ function App() {
       setTextIndex((prev) => (prev + 1) % texts.length)
     }
   }, [charIndex, isDeleting, textIndex])
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault()
+    if (!userInput.trim()) return
+
+    const userMsg = { role: 'user', text: userInput }
+    setMessages(prev => [...prev, userMsg])
+    setUserInput('')
+    setIsTyping(true)
+
+    try {
+      const prompt = `${emersonContext}\n\nUser question: ${userInput}`;
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+      
+      setMessages(prev => [...prev, { role: 'ai', text }]);
+    } catch (error) {
+      console.error("Gemini API Error:", error);
+      setMessages(prev => [...prev, { role: 'ai', text: "Sorry, I'm having trouble connecting right now." }]);
+    } finally {
+      setIsTyping(false)
+    }
+  }
 
   const splideOptions = { type: 'loop', autoplay: true, interval: 6000, arrows: false, pagination: false, speed: 1000 }
   const carouselImages = [splide1, splide2, splide3]
@@ -197,7 +241,7 @@ function App() {
         {/* RIGHT COLUMN */}
         <div className='flex flex-col gap-4 md:gap-6 md:w-1/3 md:overflow-y-auto scrollbar-hide pb-24 md:pb-0'>
           
-          {/* SKILL SET SECTION - RESTORED */}
+          {/* SKILL SET SECTION */}
           <div className={darkMode ? 'bg-gray-700/50 rounded-xl p-4 md:p-5 backdrop-blur-sm' : 'bg-white/80 rounded-xl p-4 md:p-5 shadow-md backdrop-blur-sm'}>
             <h3 className={`text-xl md:text-2xl font-bold mb-4 flex items-center gap-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
               <FaCode className='text-blue-500'/>
@@ -254,7 +298,7 @@ function App() {
             </div>
           </div>
 
-          {/* GET IN TOUCH SECTION  */}
+          {/* GET IN TOUCH SECTION */}
           <div className={darkMode ? 'bg-gray-700/50 rounded-xl p-4 md:p-5 backdrop-blur-sm' : 'bg-white/80 rounded-xl p-4 md:p-5 shadow-md backdrop-blur-sm'}>
             <h3 className={`text-xl md:text-2xl font-bold mb-4 flex items-center gap-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
               <FaUser className='text-green-500'/>
@@ -296,9 +340,67 @@ function App() {
         </div>
       </div>
 
+      {/* CHAT WITH EMERSON WIDGET */}
+      <div className="fixed bottom-6 right-6 z-[70] flex flex-col items-end">
+        {chatOpen && (
+          <div className={`mb-4 w-72 md:w-80 h-96 rounded-2xl shadow-2xl flex flex-col overflow-hidden border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+            {/* Chat Header */}
+            <div className="bg-blue-600 p-4 text-white flex justify-between items-center">
+              <span className="font-bold flex items-center gap-2"><FaUser size={14}/> Chat with Emerson</span>
+              <button onClick={() => setChatOpen(false)} className="hover:scale-110 transition-transform">
+                <FaTimes size={18} />
+              </button>
+            </div>
+
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-hide">
+              {messages.map((msg, i) => (
+                <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[80%] p-2.5 rounded-2xl text-sm ${
+                    msg.role === 'user' 
+                      ? 'bg-blue-600 text-white rounded-tr-none' 
+                      : (darkMode ? 'bg-gray-700 text-gray-200 rounded-tl-none' : 'bg-gray-100 text-gray-800 rounded-tl-none')
+                  }`}>
+                    {msg.text}
+                  </div>
+                </div>
+              ))}
+              {isTyping && <div className="text-xs text-gray-400 animate-pulse">Emerson is typing...</div>}
+              <div ref={chatEndRef} />
+            </div>
+
+            {/* Input Area */}
+            <form onSubmit={handleSendMessage} className={`p-3 border-t ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                  placeholder="Ask me anything..."
+                  className={`flex-1 text-sm p-2 rounded-lg outline-none ${darkMode ? 'bg-gray-700 text-white' : 'bg-gray-50 text-black'}`}
+                />
+                <button type="submit" className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors">
+                  <FaPaperPlane size={14}/>
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* Floating Button */}
+        {!chatOpen && (
+          <button 
+            onClick={() => setChatOpen(true)}
+            className="bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform active:scale-95 flex items-center gap-2 animate-chat-float"
+          >
+            <FaComments size={20}/> <span className="hidden md:inline font-medium">Chat with Emerson</span>
+          </button>
+        )}
+      </div>
+
       {/* BACK TO TOP BUTTON */}
-      {showTopBtn && (
-        <button onClick={goToTop} className="fixed bottom-6 right-6 z-[60] p-4 rounded-full bg-blue-600 text-white shadow-2xl animate-bounce md:hidden">
+      {showTopBtn && !chatOpen && (
+        <button onClick={goToTop} className="fixed bottom-24 right-6 z-[60] p-4 rounded-full bg-blue-600 text-white shadow-2xl animate-bounce md:hidden">
           <FaArrowUp size={18} />
         </button>
       )}
