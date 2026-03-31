@@ -35,7 +35,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai"
 
 // Initialize Gemini with API key from .env file
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 function App() {
   const [darkMode, setDarkMode] = useState(false)
@@ -120,14 +120,34 @@ function App() {
 
     try {
       const prompt = `${emersonContext}\n\nUser question: ${userInput}`;
+      
+      // Log the API key status (without exposing the key)
+      console.log("API Key exists?", !!import.meta.env.VITE_GEMINI_API_KEY);
+      console.log("Sending request to Gemini API...");
+      console.log("Prompt length:", prompt.length);
+      
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const text = response.text();
       
+      console.log("Response received successfully");
       setMessages(prev => [...prev, { role: 'ai', text }]);
     } catch (error) {
       console.error("Gemini API Error:", error);
-      setMessages(prev => [...prev, { role: 'ai', text: "Sorry, I'm having trouble connecting right now." }]);
+      console.error("Error name:", error.name);
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+      
+      // Check for specific error types
+      if (error.message?.includes("quota")) {
+        setMessages(prev => [...prev, { role: 'ai', text: "I've reached my API limit for now. Please try again later." }]);
+      } else if (error.message?.includes("rate limit")) {
+        setMessages(prev => [...prev, { role: 'ai', text: "Too many requests. Please wait a moment and try again." }]);
+      } else if (error.message?.includes("timeout")) {
+        setMessages(prev => [...prev, { role: 'ai', text: "The request timed out. Please try again." }]);
+      } else {
+        setMessages(prev => [...prev, { role: 'ai', text: "Sorry, I'm having trouble connecting right now." }]);
+      }
     } finally {
       setIsTyping(false)
     }
