@@ -2,14 +2,14 @@ import { useState, useEffect, useRef } from 'react'
 import {
   FaHome, FaUser, FaTrophy, FaProjectDiagram, FaDownload, FaMoon, FaSun,
   FaCalendarAlt, FaBriefcase, FaCertificate, FaCode, FaLaptopCode, FaChartLine,
-  FaBars, FaTimes, FaArrowUp, FaComments, FaPaperPlane, FaExternalLinkAlt, FaGithub, FaGraduationCap, 
-  FaSchool, FaBolt
+  FaBars, FaTimes, FaArrowUp, FaComments, FaPaperPlane, FaExternalLinkAlt, FaGithub, 
+  FaGraduationCap, FaSchool, FaBolt, FaBookOpen, FaClock, FaArrowRight
 } from 'react-icons/fa'
 
 import { Splide, SplideSlide } from '@splidejs/react-splide'
 import '@splidejs/react-splide/css'
 
-import { BriefcaseBusiness, Code, School, Zap } from 'lucide-react';
+import { blogPosts } from './blogdata';
 
 import { emersonContext } from './aiContext';
 
@@ -85,48 +85,65 @@ function App() {
 
   const projects = [
     {
+      name: 'Personal Portfolio',
+      description: 'My personal portfolio website showcasing my skills, projects, and experience as a developer. Built with modern web technologies.',
+      tech: ['React', 'Vite', 'Tailwind'],
+      year: '2026',
+      image: portfolioimg
+    },
+    {
       name: 'ScanRx',
       description: 'A mobile application for scanning and managing prescription medications.',
       tech: ['Kotlin', 'XML'],
       year: '2026',
-      images: ['/scanrx1.jpg', '/scanrx2.jpg']
-    },
-    {
-      name: 'Timplang Pinoy',
-      description: 'A Filipino recipe website featuring traditional dishes and cooking tutorials.',
-      tech: ['HTML', 'CSS', 'JavaScript'],
-      year: '2025',
-      images: ['/timplang1.jpg', '/timplang2.jpg']
-    },
-    {
-      name: 'Task Manager',
-      description: 'A Java-based task management application for organizing daily activities.',
-      tech: ['Java'],
-      year: '2025',
-      images: ['/task1.jpg', '/task2.jpg']
-    },
-    {
-      name: 'My Portfolio',
-      description: 'Personal portfolio website showcasing projects and skills.',
-      tech: ['React', 'Vite', 'Tailwind'],
-      year: '2026',
-      images: ['/portfolio1.jpg', '/portfolio2.jpg']
+      image: scanrx
     },
     {
       name: 'MacroMonitor',
       description: 'A web application for tracking macros and nutrition.',
       tech: ['PHP', 'MySQL', 'Tailwind', 'JavaScript'],
       year: '2025',
-      images: ['/macro1.jpg', '/macro2.jpg']
+      image: macromonitor
+    },
+    {
+      name: 'UniTask Manager',
+      description: 'A Java-based task management application for organizing daily activities and university tasks.',
+      tech: ['Java'],
+      year: '2025',
+      image: unitaskmanager
+    },
+    {
+      name: 'Timplang Pinoy',
+      description: 'A Filipino recipe website featuring traditional dishes and cooking tutorials.',
+      tech: ['HTML', 'CSS', 'JavaScript'],
+      year: '2025',
+      image: timplangpinoy
     },
     {
       name: 'Chrono Master',
       description: 'A Python-based time management tool with productivity features.',
       tech: ['Python'],
       year: '2025',
-      images: ['/chrono1.jpg', '/chrono2.jpg']
+      image: chronomaster
     }
   ]
+
+  const [selectedBlog, setSelectedBlog] = useState(null);
+  const [blogContent, setBlogContent] = useState('')
+  const [loadingBlog, setLoadingBlog] = useState(false)
+
+  const blogSplideOptions = {
+    type: 'slide',
+    perPage: 3,
+    perMove: 1,
+    gap: '1.5rem',
+    pagination: false,
+    arrows: true,
+    breakpoints: {
+      1024: { perPage: 2 },
+      768: { perPage: 1 },
+    },
+  };
 
   const getTechLogo = (tech) => {
     switch(tech) {
@@ -187,7 +204,7 @@ function App() {
       setIsDeleting(false)
       setTextIndex((prev) => (prev + 1) % texts.length)
     }
-  }, [charIndex, isDeleting, textIndex])
+  }, [charIndex, isDeleting, textIndex, texts])
 
   const handleSendMessage = async (e) => {
     e.preventDefault()
@@ -223,8 +240,10 @@ function App() {
         setMessages(prev => [...prev, { role: 'ai', text: "Too many requests. Please wait a moment and try again." }]);
       } else if (error.message?.includes("timeout")) {
         setMessages(prev => [...prev, { role: 'ai', text: "The request timed out. Please try again." }]);
+      } else if (error.message?.includes("API key")) {
+        setMessages(prev => [...prev, { role: 'ai', text: "There's an issue with the API configuration. Please check the API key." }]);
       } else {
-        setMessages(prev => [...prev, { role: 'ai', text: "Sorry, I'm having trouble connecting right now." }]);
+        setMessages(prev => [...prev, { role: 'ai', text: "Sorry, I'm having trouble connecting right now. Please try again later." }]);
       }
     } finally {
       setIsTyping(false)
@@ -247,7 +266,7 @@ function App() {
       </header>
 
       {/* SIDEBAR */}
-      <aside className={`fixed md:sticky top-0 left-0 z-50 h-full md:h-auto w-64 transform ${menuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'} rounded-none md:rounded-xl shadow-2xl md:shadow-lg p-6 flex flex-col justify-between overflow-y-auto scrollbar-hide`}>
+      <aside className={`fixed md:sticky top-0 left-0 z-50 h-full md:h-auto w-64 transform ${menuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'} rounded-none md:rounded-xl shadow-2xl md:shadow-lg p-6 flex flex-col justify-between overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]`}>
         <div>
           <div className='flex justify-end md:hidden mb-4'>
             <button onClick={()=>setMenuOpen(false)} className={darkMode ? 'text-white' : 'text-gray-900'}><FaTimes size={24}/></button>
@@ -289,7 +308,7 @@ function App() {
       <div className='flex-1 flex flex-col md:flex-row gap-4 md:overflow-hidden p-4 md:p-0'>
         
         {/* MAIN CONTENT */}
-        <div className={`flex flex-col gap-4 md:overflow-y-auto scrollbar-hide ${activePage === 'home' ? 'md:w-2/3' : 'md:w-full'} md:max-h-full`}>
+        <div className={`flex flex-col gap-4 md:overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${activePage === 'home' ? 'md:w-2/3' : 'md:w-full'} md:max-h-full`}>
           
           {/* HOME PAGE */}
           {activePage === 'home' && (
@@ -334,288 +353,366 @@ function App() {
                 </div>
               </div>
 
-              {/* Currently working */}
-              <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-5 md:p-6' : 'bg-white rounded-xl shadow-lg p-5 md:p-6'}>
-                <h2 className={`text-lg md:text-xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Currently working</h2>
-                <p className={`text-sm md:text-base ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Currently working ...</p>
+              {/* BLOG SECTION */}
+              <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-lg p-5 md:p-8 flex-shrink-0`}>
+                <div className='flex items-center justify-between mb-8'>
+                  <div className='flex items-center gap-2'>
+                    <FaBookOpen className={`${darkMode ? 'text-blue-400' : 'text-blue-600'} text-xl`}/>
+                    <h2 className={`text-xl md:text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Latest Articles</h2>
+                  </div>
+                  <div className='hidden md:block h-px flex-1 bg-gray-700 mx-6 opacity-20'></div>
+                </div>
+
+                <div className="blog-carousel-container">
+                  <Splide options={blogSplideOptions}>
+                    {blogPosts.map((post) => (
+                      <SplideSlide key={post.id} className="py-4">
+                        <div 
+                          onClick={() => {
+                            setSelectedBlog(post);
+                            document.body.style.overflow = 'hidden';
+                          }}
+                          className={`group h-full rounded-2xl overflow-hidden transform-gpu backface-hidden transition-[transform,shadow,border-color] duration-300 ease-out hover:-translate-y-2 border cursor-pointer ${
+                            darkMode 
+                              ? 'bg-gray-900 border-gray-700 hover:shadow-[0_10px_30px_-10px_rgba(59,130,246,0.3)] hover:border-blue-500/50' 
+                              : 'bg-white border-gray-100 shadow-md hover:shadow-xl hover:border-blue-200'
+                          }`}
+                        >
+                          {/* Cover Image */}
+                          <div className="relative h-44 overflow-hidden">
+                            <img 
+                              src={post.image} 
+                              alt={post.title} 
+                              className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                            />
+                            <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-[10px] px-2 py-1 rounded-md flex items-center gap-1">
+                              <FaClock className="text-blue-400" /> {post.readTime}
+                            </div>
+                          </div>
+
+                          {/* Content */}
+                          <div className="p-5 flex flex-col">
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              {post.tags.map((tag, idx) => (
+                                <span key={idx} className="text-[10px] font-bold uppercase tracking-wider text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded">
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+
+                            <h3 className={`text-lg font-bold mb-2 line-clamp-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                              {post.title}
+                            </h3>
+
+                            <p className={`text-sm mb-4 line-clamp-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                              {post.description}
+                            </p>
+
+                            <div className={`inline-flex items-center gap-2 text-sm font-bold transition-colors duration-200 ${
+                              darkMode ? 'text-blue-400 group-hover:text-blue-300' : 'text-blue-600 group-hover:text-blue-700'
+                            }`}>
+                              Read More 
+                              <FaArrowRight className="text-xs transition-transform duration-200 group-hover:translate-x-1" />
+                            </div>
+                          </div>
+                          </div> 
+                      </SplideSlide>
+                    ))}
+                  </Splide>
+                </div>
               </div>
 
-              <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-5 md:p-6' : 'bg-white rounded-xl shadow-lg p-5 md:p-6'}>
-                <h2 className={`text-lg md:text-xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Currently working</h2>
-                <p className={`text-sm md:text-base ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Currently working ...</p>
-              </div>
+              {/* BLOG MODAL OVERLAY */}
+              {selectedBlog && (
+                <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 md:p-10 bg-black/70 backdrop-blur-sm transition-all duration-300">
+                  <div 
+                    className={`relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl transition-all duration-300 border ${
+                      darkMode ? 'bg-gray-900 text-white border-gray-700' : 'bg-white text-gray-900 border-gray-200'
+                    } [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]`}
+                  >
+                    {/* Sticky Header with Close Button */}
+                    <div className="sticky top-0 z-10 flex justify-end p-4">
+                      <button 
+                        onClick={() => {
+                          setSelectedBlog(null);
+                          document.body.style.overflow = 'auto';
+                        }}
+                        className={`p-2 rounded-full backdrop-blur-md transition-colors ${
+                          darkMode ? 'bg-gray-800/50 hover:bg-gray-700 text-white' : 'bg-gray-100/50 hover:bg-gray-200 text-gray-900'
+                        }`}
+                      >
+                        <FaTimes size={24} />
+                      </button>
+                    </div>
+
+                    <div className="px-6 pb-12 md:px-12">
+                      {/* Article Header Image */}
+                      <div className="w-full h-64 md:h-96 rounded-2xl overflow-hidden mb-8 shadow-inner">
+                        <img src={selectedBlog.image} alt={selectedBlog.title} className="w-full h-full object-cover" />
+                      </div>
+
+                      {/* Tags & Meta */}
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {selectedBlog.tags.map((tag, idx) => (
+                          <span key={idx} className="text-xs font-bold uppercase tracking-wider text-blue-500 bg-blue-500/10 px-3 py-1 rounded-md">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      <h1 className="text-3xl md:text-5xl font-black mb-6 leading-tight">
+                        {selectedBlog.title}
+                      </h1>
+
+                      <div className="flex items-center gap-6 mb-8 pb-8 border-b border-gray-500/20 text-sm font-medium opacity-70">
+                        <div className="flex items-center gap-2"><FaClock className="text-blue-500" /> {selectedBlog.readTime}</div>
+                        <div>{selectedBlog.date}</div>
+                      </div>
+
+                      {/* Article Content */}
+                      <div className={`text-lg leading-relaxed whitespace-pre-line font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                        {selectedBlog.content}
+                      </div>
+                      
+                    </div>
+                  </div>
+                </div>
+              )}
             </>
           )}
 
-      {/* ABOUT PAGE - With Main Content and Right Column */}
-      {activePage === 'about' && (
-  <div className='flex flex-col md:flex-row gap-6'>
+          {/* ABOUT PAGE */}
+          {activePage === 'about' && (
+            <div className='flex flex-col md:flex-row gap-6'>
 
-    {/* MAIN CONTENT - Left Side */}
-    <div className='flex-1 flex flex-col gap-6'>
+              {/* MAIN CONTENT - Left Side */}
+              <div className='flex-1 flex flex-col gap-6'>
 
-      {/* Introduction Section (Facebook Cover Style) */}
-      <div className={`overflow-hidden rounded-2xl shadow-xl border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
-        <div className='relative h-48 md:h-60 w-full overflow-hidden'>
-          <img src={cover} alt='Cover' className='w-full h-full object-cover' />
-          <div className='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent'></div>
-        </div>
-
-        <div className='relative p-6 pt-0'>
-          <div className='-mt-14 md:-mt-16 flex justify-center md:justify-start mb-4 relative z-10'>
-            <div className={`p-1 rounded-full ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-2xl`}>
-              <img src={profile} alt='Profile' className='w-28 h-28 md:w-32 md:h-32 rounded-full object-cover border-4 border-white dark:border-gray-800' />
-            </div>
-          </div>
-
-          <div className='text-center md:text-left'>
-            <h2 className={`text-3xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Introduction</h2>
-            <p className={`text-xl mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-              Hi, I'm <span className='font-extrabold text-blue-500'>Emerson Isla</span>
-            </p>
-            <p className={`text-md leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              An aspiring <span className='font-semibold text-blue-500'>Full-Stack Developer</span> passionate about building modern, scalable, and high-performance web applications. I enjoy turning ideas into functional digital products by combining clean code, thoughtful design, and efficient problem-solving.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Career Roadmap Section */}
-      <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
-        <h2 className={`text-2xl font-bold mb-10 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Career Roadmap</h2>
-        <div className="relative px-2">
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500 via-purple-500 to-cyan-500 transform md:-translate-x-1/2 opacity-30"></div>
-          <div className="space-y-16">
-            {[
-              { icon: FaSchool, color: 'text-blue-500', shadowColor: 'shadow-blue-500/50', bgColor: 'bg-blue-500/10', title: 'Present – BSIT Student', description: ['Studying at University of Pangasinan', 'Building projects using React and Tailwind', 'Improving frontend development skills'] },
-              { icon: FaBolt, color: 'text-purple-500', shadowColor: 'shadow-purple-500/50', bgColor: 'bg-purple-500/10', title: 'Mid-Term Goal – Full Stack Developer', description: ['Work with React, Express.js, and databases', 'Build scalable full-stack web applications', 'Contribute to real-world projects'] },
-              { icon: FaBriefcase, color: 'text-cyan-500', shadowColor: 'shadow-cyan-500/50', bgColor: 'bg-cyan-500/10', title: 'Long-Term Goal – Senior Developer / Tech Lead', description: ['Build impactful digital products', 'Lead development teams', 'Mentor junior developers and contribute to the tech community'] }
-            ].map((step, index) => {
-              const IconComponent = step.icon;
-              return (
-                <div key={index} className={`flex flex-col md:flex-row ${index % 2 === 0 ? 'md:flex-row-reverse' : ''} items-center relative`}>
-                  <div className="hidden md:block flex-1 w-1/2"></div>
-                  <div className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full ${darkMode ? 'bg-gray-800' : 'bg-white'} border-2 border-current ${step.color} mx-4 md:mx-0 shadow-[0_0_15px_rgba(0,0,0,0.1)]`}>
-                    <IconComponent className="w-6 h-6" />
+                {/* Introduction Section */}
+                <div className={`overflow-hidden rounded-2xl shadow-xl border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+                  <div className='relative h-48 md:h-60 w-full overflow-hidden'>
+                    <img src={cover} alt='Cover' className='w-full h-full object-cover' />
+                    <div className='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent'></div>
                   </div>
-                  <div className="flex-1 w-full md:w-1/2">
-                    <div className={`p-6 rounded-2xl shadow-xl border ${darkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-white border-gray-100'} md:ml-8 md:mr-0 ml-12`}>
-                      <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-3 ${step.bgColor} ${step.color} uppercase tracking-wider`}>Milestone {index + 1}</div>
-                      <h3 className={`text-xl font-bold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{step.title}</h3>
-                      <ul className={`space-y-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        {step.description.map((desc, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm leading-relaxed">
-                            <span className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${step.color.replace('text', 'bg')}`}></span>
-                            {desc}
-                          </li>
-                        ))}
-                      </ul>
+
+                  <div className='relative p-6 pt-0'>
+                    <div className='-mt-14 md:-mt-16 flex justify-center md:justify-start mb-4 relative z-10'>
+                      <div className={`p-1 rounded-full ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-2xl`}>
+                        <img src={profile} alt='Profile' className='w-28 h-28 md:w-32 md:h-32 rounded-full object-cover border-4 border-white dark:border-gray-800' />
+                      </div>
+                    </div>
+
+                    <div className='text-center md:text-left'>
+                      <h2 className={`text-3xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Introduction</h2>
+                      <p className={`text-xl mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                        Hi, I'm <span className='font-extrabold text-blue-500'>Emerson Isla</span>
+                      </p>
+                      <p className={`text-md leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                        An aspiring <span className='font-semibold text-blue-500'>Full-Stack Developer</span> passionate about building modern, scalable, and high-performance web applications. I enjoy turning ideas into functional digital products by combining clean code, thoughtful design, and efficient problem-solving.
+                      </p>
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
 
-      {/* skill set Section */}
-      <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
-        <h2 className={`text-2xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Skill Set</h2>
-        <div className='grid grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4'>
-          {[
-            { name: 'HTML', img: html }, { name: 'CSS', img: css }, { name: 'JS', img: javascript },
-            { name: 'React', img: react }, { name: 'Tailwind', img: tailwind }, { name: 'Bootstrap', img: bootstrap },
-            { name: 'Vite', img: vite }, { name: 'PHP', img: php }, { name: 'Python', img: python },
-            { name: 'Java', img: java }, { name: 'Kotlin', img: kotlin }, { name: 'Node', img: node },
-            { name: 'MySQL', img: mysql }, { name: 'XML', img: xml }
-          ].map((tech, idx) => (
-            <div key={idx} className={`flex flex-col items-center p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
-              <img src={tech.img} alt={tech.name} className='w-12 h-12 md:w-14 md:h-14 object-contain mb-2' />
-              <span className={`text-xs font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{tech.name}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-
-    {/* RIGHT COLUMN */}
-    <div className='md:w-80 flex flex-col gap-6'>
-      
-    {/* Specialization Section */}
-      <div className={`overflow-hidden relative ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-2xl shadow-xl p-5 border`}>
-        <h3 className={`text-xl font-bold mb-4 flex items-center gap-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-          <div className={`p-1.5 rounded-lg ${darkMode ? 'bg-blue-500/20' : 'bg-blue-50'}`}>
-            <FaCode className={`text-xl ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
-          </div>
-          Specialization
-        </h3>
-
-        <div className='relative flex justify-center mb-6 p-6 rounded-2xl bg-gradient-to-br from-blue-500/5 to-purple-500/10 border border-blue-500/10 overflow-hidden'>
-          <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-blue-500/10 rounded-full blur-2xl"></div>
-          <img 
-            src={react} 
-            alt='React' 
-            className='w-20 h-20 object-contain drop-shadow-[0_0_15px_rgba(59,130,246,0.6)] animate-[spin_15s_linear_infinite]' 
-          />
-        </div>
-
-        <div className='space-y-3 relative z-10'>
-          <h4 className={`font-bold text-lg ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Frontend Architecture</h4>
-          <p className={`text-sm leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            I specialize in building high-performance web applications using <span className='font-semibold text-blue-500'>React</span>. Focus on component modularity and clean UI.
-          </p>
-        </div>
-      </div>
-
-      {/* Education Section */}
-      <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-2xl shadow-xl p-5 border`}>
-        <div className='flex items-center gap-2 mb-6'>
-          <div className={`p-2 rounded-lg ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-50 text-blue-600'}`}>
-            <FaGraduationCap size={22} />
-          </div>
-          <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Education</h3>
-        </div>
-
-  <div className='space-y-8'>
-    
-    {/* College - Active/Current */}
-    <div className='relative'>
-      <div className='flex flex-col gap-3'>
-        <div className="flex items-center gap-4">
-          <img src={upang} alt='UPang' className='w-16 h-16 object-contain' />
-          <div>
-            <p className={`font-bold text-base md:text-lg leading-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>PHINMA University of Pangasinan</p>
-            <p className={`text-sm font-semibold ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Bachelor of Science in Information Technology (BSIT)</p>
-          </div>
-        </div>
-        <div className='flex flex-wrap gap-3 ml-[72px]'>
-          <span className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
-            <FaCalendarAlt size={12} className="text-blue-500" /> Present
-          </span>
-          <span className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
-            <FaChartLine size={12} className="text-blue-500" /> GWA: TBD
-          </span>
-        </div>
-      </div>
-    </div>
-
-    {/* High School */}
-    <div className='relative pt-2'>
-      <div className='flex flex-col gap-3'>
-        <div className="flex items-center gap-4">
-          <img src={sjnhs} alt='SJNHS' className='w-16 h-16 object-contain' />
-          <div>
-            <p className={`font-bold text-base md:text-lg leading-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>San Jacinto National High School</p>
-            <p className={`text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>TVL - Information and Communications Technology (ICT)</p>
-          </div>
-        </div>
-        
-        <div className='ml-[72px] space-y-2'>
-          <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 uppercase tracking-wide`}>
-            <FaTrophy size={12} className="drop-shadow-sm" /> With Highest Honor (GWA: 98)
-          </div>
-          <div className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-            NC II Passer - Computer System Servicing (CSS)
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-    </div>
-  </div>
-)}
-
-          {/* PROJECTS PAGE - Full width with 2 columns */}
-            {activePage === 'projects' && (
-              <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
-                <h1 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>My Projects</h1>
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                  {[
-                    {
-                      name: 'Personal Portfolio',
-                      description: 'My personal portfolio website showcasing my skills, projects, and experience as a developer. Built with modern web technologies.',
-                      tech: ['React', 'Vite', 'Tailwind'],
-                      year: '2026',
-                      image: portfolioimg
-                    },
-                    {
-                      name: 'ScanRx',
-                      description: 'A mobile application for scanning and managing prescription medications.',
-                      tech: ['Kotlin', 'XML'],
-                      year: '2026',
-                      image: scanrx
-                    },
-                    {
-                      name: 'MacroMonitor',
-                      description: 'A web application for tracking macros and nutrition.',
-                      tech: ['PHP', 'MySQL', 'Tailwind', 'JavaScript'],
-                      year: '2025',
-                      image: macromonitor
-                    },
-                    {
-                      name: 'UniTask Manager',
-                      description: 'A Java-based task management application for organizing daily activities and university tasks.',
-                      tech: ['Java'],
-                      year: '2025',
-                      image: unitaskmanager
-                    },
-                    {
-                      name: 'Timplang Pinoy',
-                      description: 'A Filipino recipe website featuring traditional dishes and cooking tutorials.',
-                      tech: ['HTML', 'CSS', 'JavaScript'],
-                      year: '2025',
-                      image: timplangpinoy
-                    },
-                    {
-                      name: 'Chrono Master',
-                      description: 'A Python-based time management tool with productivity features.',
-                      tech: ['Python'],
-                      year: '2025',
-                      image: chronomaster
-                    }
-                  ].map((project, idx) => (
-                    <div key={idx} className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] ${darkMode ? 'bg-gray-700' : 'bg-gray-50'} shadow-lg`}>
-                      {/* Project Image */}
-                      <div className='h-48 w-full overflow-hidden'>
-                        <img 
-                          src={project.image} 
-                          alt={project.name} 
-                          className='w-full h-full object-cover hover:scale-105 transition-transform duration-300'
-                        />
-                      </div>
-                      <div className='p-5'>
-                        <div className='flex justify-between items-start mb-3'>
-                          <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{project.name}</h2>
-                          <span className={`text-xs px-3 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>{project.year}</span>
-                        </div>
-                        <p className={`text-sm mb-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{project.description}</p>
-                        <div className='flex flex-wrap gap-2 mb-4'>
-                          {project.tech.map((tech, techIdx) => (
-                            <div key={techIdx} className='flex items-center gap-1 px-2 py-1 rounded-lg bg-blue-500/10'>
-                              <img src={getTechLogo(tech)} alt={tech} className='w-4 h-4 object-contain' />
-                              <span className={`text-xs ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{tech}</span>
+                {/* Career Roadmap Section */}
+                <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
+                  <h2 className={`text-2xl font-bold mb-10 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Career Roadmap</h2>
+                  <div className="relative px-2">
+                    <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500 via-purple-500 to-cyan-500 transform md:-translate-x-1/2 opacity-30"></div>
+                    <div className="space-y-16">
+                      {[
+                        { icon: FaSchool, color: 'text-blue-500', shadowColor: 'shadow-blue-500/50', bgColor: 'bg-blue-500/10', title: 'Present – BSIT Student', description: ['Studying at University of Pangasinan', 'Building projects using React and Tailwind', 'Improving frontend development skills'] },
+                        { icon: FaBolt, color: 'text-purple-500', shadowColor: 'shadow-purple-500/50', bgColor: 'bg-purple-500/10', title: 'Mid-Term Goal – Full Stack Developer', description: ['Work with React, Express.js, and databases', 'Build scalable full-stack web applications', 'Contribute to real-world projects'] },
+                        { icon: FaBriefcase, color: 'text-cyan-500', shadowColor: 'shadow-cyan-500/50', bgColor: 'bg-cyan-500/10', title: 'Long-Term Goal – Senior Developer / Tech Lead', description: ['Build impactful digital products', 'Lead development teams', 'Mentor junior developers and contribute to the tech community'] }
+                      ].map((step, index) => {
+                        const IconComponent = step.icon;
+                        return (
+                          <div key={index} className={`flex flex-col md:flex-row ${index % 2 === 0 ? 'md:flex-row-reverse' : ''} items-center relative`}>
+                            <div className="hidden md:block flex-1 w-1/2"></div>
+                            <div className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full ${darkMode ? 'bg-gray-800' : 'bg-white'} border-2 border-current ${step.color} mx-4 md:mx-0 shadow-[0_0_15px_rgba(0,0,0,0.1)]`}>
+                              <IconComponent className="w-6 h-6" />
                             </div>
-                          ))}
-                        </div>
-                        <div className='flex gap-3'>
-                          <button className='flex items-center gap-1 text-sm text-blue-500 hover:text-blue-600 transition-colors'>
-                            <FaGithub /> GitHub
-                          </button>
-                        </div>
-                      </div>
+                            <div className="flex-1 w-full md:w-1/2">
+                              <div className={`p-6 rounded-2xl shadow-xl border ${darkMode ? 'bg-gray-700/50 border-gray-600' : 'bg-white border-gray-100'} md:ml-8 md:mr-0 ml-12`}>
+                                <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-3 ${step.bgColor} ${step.color} uppercase tracking-wider`}>Milestone {index + 1}</div>
+                                <h3 className={`text-xl font-bold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{step.title}</h3>
+                                <ul className={`space-y-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                  {step.description.map((desc, i) => (
+                                    <li key={i} className="flex items-start gap-2 text-sm leading-relaxed">
+                                      <span className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${step.color.replace('text', 'bg')}`}></span>
+                                      {desc}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
-                  ))}
+                  </div>
+                </div>
+
+                {/* Skill Set Section */}
+                <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
+                  <h2 className={`text-2xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Skill Set</h2>
+                  <div className='grid grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4'>
+                    {[
+                      { name: 'HTML', img: html }, { name: 'CSS', img: css }, { name: 'JS', img: javascript },
+                      { name: 'React', img: react }, { name: 'Tailwind', img: tailwind }, { name: 'Bootstrap', img: bootstrap },
+                      { name: 'Vite', img: vite }, { name: 'PHP', img: php }, { name: 'Python', img: python },
+                      { name: 'Java', img: java }, { name: 'Kotlin', img: kotlin }, { name: 'Node', img: node },
+                      { name: 'MySQL', img: mysql }, { name: 'XML', img: xml }
+                    ].map((tech, idx) => (
+                      <div key={idx} className={`flex flex-col items-center p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                        <img src={tech.img} alt={tech.name} className='w-12 h-12 md:w-14 md:h-14 object-contain mb-2' />
+                        <span className={`text-xs font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{tech.name}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            )}
+
+              {/* RIGHT COLUMN */}
+              <div className='md:w-80 flex flex-col gap-6'>
+                
+                {/* Specialization Section */}
+                <div className={`overflow-hidden relative ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-2xl shadow-xl p-5 border`}>
+                  <h3 className={`text-xl font-bold mb-4 flex items-center gap-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    <div className={`p-1.5 rounded-lg ${darkMode ? 'bg-blue-500/20' : 'bg-blue-50'}`}>
+                      <FaCode className={`text-xl ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+                    </div>
+                    Specialization
+                  </h3>
+
+                  <div className='relative flex justify-center mb-6 p-6 rounded-2xl bg-gradient-to-br from-blue-500/5 to-purple-500/10 border border-blue-500/10 overflow-hidden'>
+                    <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-blue-500/10 rounded-full blur-2xl"></div>
+                    <img 
+                      src={react} 
+                      alt='React' 
+                      className='w-20 h-20 object-contain drop-shadow-[0_0_15px_rgba(59,130,246,0.6)] animate-[spin_15s_linear_infinite]' 
+                    />
+                  </div>
+
+                  <div className='space-y-3 relative z-10'>
+                    <h4 className={`font-bold text-lg ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Frontend Architecture</h4>
+                    <p className={`text-sm leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      I specialize in building high-performance web applications using <span className='font-semibold text-blue-500'>React</span>. Focus on component modularity and clean UI.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Education Section */}
+                <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-2xl shadow-xl p-5 border`}>
+                  <div className='flex items-center gap-2 mb-6'>
+                    <div className={`p-2 rounded-lg ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-50 text-blue-600'}`}>
+                      <FaGraduationCap size={22} />
+                    </div>
+                    <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Education</h3>
+                  </div>
+
+                  <div className='space-y-8'>
+                    {/* College */}
+                    <div className='relative'>
+                      <div className='flex flex-col gap-3'>
+                        <div className="flex items-center gap-4">
+                          <img src={upang} alt='UPang' className='w-16 h-16 object-contain' />
+                          <div>
+                            <p className={`font-bold text-base md:text-lg leading-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>PHINMA University of Pangasinan</p>
+                            <p className={`text-sm font-semibold ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Bachelor of Science in Information Technology (BSIT)</p>
+                          </div>
+                        </div>
+                        <div className='flex flex-wrap gap-3 ml-[72px]'>
+                          <span className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
+                            <FaCalendarAlt size={12} className="text-blue-500" /> Present
+                          </span>
+                          <span className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
+                            <FaChartLine size={12} className="text-blue-500" /> GWA: TBD
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* High School */}
+                    <div className='relative pt-2'>
+                      <div className='flex flex-col gap-3'>
+                        <div className="flex items-center gap-4">
+                          <img src={sjnhs} alt='SJNHS' className='w-16 h-16 object-contain' />
+                          <div>
+                            <p className={`font-bold text-base md:text-lg leading-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>San Jacinto National High School</p>
+                            <p className={`text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>TVL - Information and Communications Technology (ICT)</p>
+                          </div>
+                        </div>
+                        
+                        <div className='ml-[72px] space-y-2'>
+                          <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 uppercase tracking-wide`}>
+                            <FaTrophy size={12} className="drop-shadow-sm" /> With Highest Honor (GWA: 98)
+                          </div>
+                          <div className={`flex items-center gap-2 text-xs font-medium ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                            NC II Passer - Computer System Servicing (CSS)
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* PROJECTS PAGE */}
+          {activePage === 'projects' && (
+            <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
+              <h1 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>My Projects</h1>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                {projects.map((project, idx) => (
+                  <div key={idx} className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] ${darkMode ? 'bg-gray-700' : 'bg-gray-50'} shadow-lg`}>
+                    <div className='h-48 w-full overflow-hidden'>
+                      <img 
+                        src={project.image} 
+                        alt={project.name} 
+                        className='w-full h-full object-cover hover:scale-105 transition-transform duration-300'
+                      />
+                    </div>
+                    <div className='p-5'>
+                      <div className='flex justify-between items-start mb-3'>
+                        <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{project.name}</h2>
+                        <span className={`text-xs px-3 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>{project.year}</span>
+                      </div>
+                      <p className={`text-sm mb-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{project.description}</p>
+                      <div className='flex flex-wrap gap-2 mb-4'>
+                        {project.tech.map((tech, techIdx) => (
+                          <div key={techIdx} className='flex items-center gap-1 px-2 py-1 rounded-lg bg-blue-500/10'>
+                            <img src={getTechLogo(tech)} alt={tech} className='w-4 h-4 object-contain' />
+                            <span className={`text-xs ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{tech}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className='flex gap-3'>
+                        <button className='flex items-center gap-1 text-sm text-blue-500 hover:text-blue-600 transition-colors'>
+                          <FaGithub /> GitHub
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ACHIEVEMENTS PAGE */}
+          {activePage === 'achievements' && (
+            <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
+              <h1 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Achievements</h1>
+              <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>Achievements content to be updated...</p>
+            </div>
+          )}
         </div>
 
         {/* RIGHT COLUMN - Only show on Home page */}
         {activePage === 'home' && (
-          <div className='flex flex-col gap-4 md:gap-6 md:w-1/3 md:overflow-y-auto scrollbar-hide pb-24 md:pb-0'>
+          <div className='flex flex-col gap-4 md:gap-6 md:w-1/3 md:overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-24 md:pb-0'>
             
             {/* SKILL SET SECTION */}
             <div className={darkMode ? 'bg-gray-700/50 rounded-xl p-4 md:p-5 backdrop-blur-sm' : 'bg-white/80 rounded-xl p-4 md:p-5 shadow-md backdrop-blur-sm'}>
@@ -727,7 +824,7 @@ function App() {
                 <FaTimes size={18} />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-hide">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               {messages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[80%] p-2.5 rounded-2xl text-sm ${

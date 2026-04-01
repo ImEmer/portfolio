@@ -248,3 +248,27 @@
 .animate-chat-float {
   animation: chatFloat 3s ease-in-out infinite;
 }
+
+/* Customizing Splide Arrows to match Portfolio Theme */
+.blog-carousel-container .splide__arrow {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  transition: all 0.3s ease;
+}
+
+.blog-carousel-container .splide__arrow svg {
+  fill: #3b82f6;
+}
+
+.blog-carousel-container .splide__arrow:hover {
+  background: #3b82f6;
+}
+
+.blog-carousel-container .splide__arrow:hover svg {
+  fill: white;
+}
+
+/* Adjusting padding so shadows don't get clipped */
+.blog-carousel-container .splide__list {
+  padding-bottom: 20px;
+}

@@ -20,9 +20,10 @@ Entry level (0 years professional experience but actively learning and building 
 --- PROJECTS ---
 1. Portfolio Website - Built with React + Vite, responsive design, dark mode, AI chatbot integration
 2. ScanRx - Medical prescription scanning app with OCR technology
-3. Task Manager - Productivity app using java with drag-and-drop task boards, deadline tracking, and progress visualization
+3. Unitask Manager - Productivity app using java with drag-and-drop task boards, deadline tracking, and progress visualization
 4. Timplang Pinoy - Filipino recipe collection and meal planning app with ingredient lists 
 5. MacroMonitor - Nutrition tracking app that monitors daily macronutrient intake with food database and meal logging
+6. ChronoMaster
 
 --- CERTIFICATIONS ---
 No certifications yet
@@ -30,14 +31,12 @@ No certifications yet
 --- EDUCATION ---
 University of Pangasinan
 Bachelor of Science in Information Technology
+Currently 2nd year student
 
 --- ACHIEVEMENTS ---
 - Successfully deployed portfolio website with AI chatbot integration
-- Built 5 functional web applications as part of learning journey
+- Built 6 functional web applications as part of learning journey
 - Continuous learning and improvement in front-end development
-
---- CURRENT WORK ---
-Building modern web experiences with React and Tailwind CSS. Always learning new technologies.
 
 --- PERSONALITY TRAITS ---
 - Friendly and approachable
