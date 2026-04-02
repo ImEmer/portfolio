@@ -276,9 +276,13 @@ function App() {
             <h1 className='text-xl font-bold'>Emerson Isla</h1>
             <p className='text-sm text-gray-500 font-medium'>Front-end Developer</p>
           </div>
-          <button className='flex items-center justify-center gap-2 bg-blue-600 text-white hover:bg-blue-700 px-4 py-2.5 rounded-lg mb-8 w-full transition-all duration-200 shadow-md active:scale-95'>
-            <FaDownload/> Resume
-          </button>
+          <a 
+          href="/RESUME-emer.docx" 
+          download
+          className='flex items-center justify-center gap-2 bg-blue-600 text-white hover:bg-blue-700 px-4 py-2.5 rounded-lg mb-8 w-full transition-all duration-200 shadow-md active:scale-95'
+        >
+          <FaDownload/> Resume
+        </a>
           <nav className='flex flex-col gap-2 text-md font-medium'>
             <button onClick={() => { setActivePage('home'); setMenuOpen(false); }} className={`flex items-center gap-3 w-full p-2.5 rounded-lg transition-colors duration-200 ${activePage === 'home' ? 'text-blue-500 bg-blue-50 dark:bg-blue-900/20' : darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
               <FaHome/> Home
