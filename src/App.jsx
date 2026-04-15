@@ -10,8 +10,7 @@ import { Splide, SplideSlide } from '@splidejs/react-splide'
 import '@splidejs/react-splide/css'
 
 import { blogPosts } from './blogdata';
-
-import { emersonContext } from './aiContext';
+import { emersonContext, SUGGESTIONS, getContextSuggestions } from './aiContext';
 
 import profile from './assets/profile.jpg'
 import html from './assets/html.png'
@@ -32,6 +31,8 @@ import mysql from './assets/mysql.png'
 import cover from './assets/cover.jpg'
 import sjnhs from './assets/sjnhs.jpg'
 import upang from './assets/upanglogo.jpg'
+import jse from './assets/jse.png'
+import ncii from './assets/ncii.png'
 
 import portfolioimg from './assets/portfolio.png'
 import scanrx from './assets/scanrx.png'
@@ -44,15 +45,17 @@ import splide1 from './assets/splide1.jpg'
 import splide2 from './assets/splide2.jpg'
 import splide3 from './assets/splide3.jpg'
 
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+
 import './App.css'
 import { GoogleGenerativeAI } from "@google/generative-ai"
 
-// Initialize Gemini with API key from .env file
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false)
+  const [darkMode, setDarkMode] = useState(true)
   const [menuOpen, setMenuOpen] = useState(false)
   const [showTopBtn, setShowTopBtn] = useState(false)
   const [displayText, setDisplayText] = useState('')
@@ -64,11 +67,14 @@ function App() {
 
   const [chatOpen, setChatOpen] = useState(false)
   const [messages, setMessages] = useState([
-    { role: 'ai', text: "Hi! I'm Emerson's AI assistant. How can I help you today?" }
+    { role: 'ai', text: "Hi! I'm Emerson's AI assistant. Feel free to ask me anything." }
   ])
   const [userInput, setUserInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
+  const [suggestions, setSuggestions] = useState(SUGGESTIONS.default)
+  const [showSuggestions, setShowSuggestions] = useState(true)
   const chatEndRef = useRef(null)
+  const idleTimerRef = useRef(null)
 
   const texts = [
     'Hey, Welcome to my portfolio',
@@ -173,10 +179,20 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Auto-scroll chat to bottom
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
+  }, [messages, showSuggestions])
+
+  useEffect(() => {
+    if (chatOpen) {
+      setSuggestions(SUGGESTIONS.default)
+      setShowSuggestions(true)
+    }
+  }, [chatOpen])
+
+  useEffect(() => {
+    return () => clearTimeout(idleTimerRef.current)
+  }, [])
 
   const goToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 
@@ -184,6 +200,15 @@ function App() {
     const date = new Date()
     setCurrentDate(date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }))
   }, [])
+
+  useEffect(() => {
+  AOS.init({
+    duration: 1000,
+    offset: 100,
+    once: true,
+    easing: 'ease-in-out',
+  });
+}, []);
 
   useEffect(() => {
     const currentFullText = texts[textIndex]
@@ -204,50 +229,54 @@ function App() {
       setIsDeleting(false)
       setTextIndex((prev) => (prev + 1) % texts.length)
     }
-  }, [charIndex, isDeleting, textIndex, texts])
+  }, [charIndex, isDeleting, textIndex])
 
-  const handleSendMessage = async (e) => {
-    e.preventDefault()
-    if (!userInput.trim()) return
+  const sendMessage = async (text) => {
+    if (!text.trim()) return
 
-    const userMsg = { role: 'user', text: userInput }
+    clearTimeout(idleTimerRef.current)
+    setShowSuggestions(false)
+
+    const userMsg = { role: 'user', text }
     setMessages(prev => [...prev, userMsg])
     setUserInput('')
     setIsTyping(true)
 
     try {
-      const prompt = `${emersonContext}\n\nUser question: ${userInput}`;
-      
-      console.log("API Key exists?", !!import.meta.env.VITE_GEMINI_API_KEY);
-      console.log("Sending request to Gemini API...");
-      console.log("Prompt length:", prompt.length);
-      
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-      
-      console.log("Response received successfully");
-      setMessages(prev => [...prev, { role: 'ai', text }]);
+      const prompt = `${emersonContext}\n\nUser question: ${text}`
+      const result = await model.generateContent(prompt)
+      const response = await result.response
+      const aiText = response.text()
+      setMessages(prev => [...prev, { role: 'ai', text: aiText }])
+      setSuggestions(getContextSuggestions(text))
+      setShowSuggestions(true)
+
+      clearTimeout(idleTimerRef.current)
+      idleTimerRef.current = setTimeout(() => {
+        setSuggestions(SUGGESTIONS.default)
+        setShowSuggestions(true)
+      }, 15000)
+
     } catch (error) {
-      console.error("Gemini API Error:", error);
-      console.error("Error name:", error.name);
-      console.error("Error message:", error.message);
-      console.error("Error stack:", error.stack);
-      
-      if (error.message?.includes("quota")) {
-        setMessages(prev => [...prev, { role: 'ai', text: "I've reached my API limit for now. Please try again later." }]);
-      } else if (error.message?.includes("rate limit")) {
-        setMessages(prev => [...prev, { role: 'ai', text: "Too many requests. Please wait a moment and try again." }]);
-      } else if (error.message?.includes("timeout")) {
-        setMessages(prev => [...prev, { role: 'ai', text: "The request timed out. Please try again." }]);
-      } else if (error.message?.includes("API key")) {
-        setMessages(prev => [...prev, { role: 'ai', text: "There's an issue with the API configuration. Please check the API key." }]);
-      } else {
-        setMessages(prev => [...prev, { role: 'ai', text: "Sorry, I'm having trouble connecting right now. Please try again later." }]);
-      }
+      let errMsg = "Sorry, I'm having trouble connecting right now. Please try again later."
+      if (error.message?.includes("quota")) errMsg = "I've reached my API limit for now. Please try again later."
+      else if (error.message?.includes("rate limit")) errMsg = "Too many requests. Please wait a moment and try again."
+      else if (error.message?.includes("timeout")) errMsg = "The request timed out. Please try again."
+      else if (error.message?.includes("API key")) errMsg = "There's an issue with the API configuration. Please check the API key."
+      setMessages(prev => [...prev, { role: 'ai', text: errMsg }])
+      setShowSuggestions(true)
     } finally {
       setIsTyping(false)
     }
+  }
+
+  const handleSendMessage = (e) => {
+    e.preventDefault()
+    sendMessage(userInput)
+  }
+
+  const handleSuggestionClick = (text) => {
+    sendMessage(text)
   }
 
   const splideOptions = { type: 'loop', autoplay: true, interval: 6000, arrows: false, pagination: false, speed: 1000 }
@@ -277,12 +306,12 @@ function App() {
             <p className='text-sm text-gray-500 font-medium'>Front-end Developer</p>
           </div>
           <a 
-          href="/RESUME-emer.docx" 
-          download
-          className='flex items-center justify-center gap-2 bg-blue-600 text-white hover:bg-blue-700 px-4 py-2.5 rounded-lg mb-8 w-full transition-all duration-200 shadow-md active:scale-95'
-        >
-          <FaDownload/> Resume
-        </a>
+            href="/RESUME-emer.docx" 
+            download
+            className='flex items-center justify-center gap-2 bg-blue-600 text-white hover:bg-blue-700 px-4 py-2.5 rounded-lg mb-8 w-full transition-all duration-200 shadow-md active:scale-95'
+          >
+            <FaDownload/> Resume
+          </a>
           <nav className='flex flex-col gap-2 text-md font-medium'>
             <button onClick={() => { setActivePage('home'); setMenuOpen(false); }} className={`flex items-center gap-3 w-full p-2.5 rounded-lg transition-colors duration-200 ${activePage === 'home' ? 'text-blue-500 bg-blue-50 dark:bg-blue-900/20' : darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
               <FaHome/> Home
@@ -366,7 +395,6 @@ function App() {
                   </div>
                   <div className='hidden md:block h-px flex-1 bg-gray-700 mx-6 opacity-20'></div>
                 </div>
-
                 <div className="blog-carousel-container">
                   <Splide options={blogSplideOptions}>
                     {blogPosts.map((post) => (
@@ -382,7 +410,6 @@ function App() {
                               : 'bg-white border-gray-100 shadow-md hover:shadow-xl hover:border-blue-200'
                           }`}
                         >
-                          {/* Cover Image */}
                           <div className="relative h-44 overflow-hidden">
                             <img 
                               src={post.image} 
@@ -393,8 +420,6 @@ function App() {
                               <FaClock className="text-blue-400" /> {post.readTime}
                             </div>
                           </div>
-
-                          {/* Content */}
                           <div className="p-5 flex flex-col">
                             <div className="flex flex-wrap gap-2 mb-3">
                               {post.tags.map((tag, idx) => (
@@ -403,15 +428,12 @@ function App() {
                                 </span>
                               ))}
                             </div>
-
                             <h3 className={`text-lg font-bold mb-2 line-clamp-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                               {post.title}
                             </h3>
-
                             <p className={`text-sm mb-4 line-clamp-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                               {post.description}
                             </p>
-
                             <div className={`inline-flex items-center gap-2 text-sm font-bold transition-colors duration-200 ${
                               darkMode ? 'text-blue-400 group-hover:text-blue-300' : 'text-blue-600 group-hover:text-blue-700'
                             }`}>
@@ -419,7 +441,7 @@ function App() {
                               <FaArrowRight className="text-xs transition-transform duration-200 group-hover:translate-x-1" />
                             </div>
                           </div>
-                          </div> 
+                        </div> 
                       </SplideSlide>
                     ))}
                   </Splide>
@@ -434,7 +456,6 @@ function App() {
                       darkMode ? 'bg-gray-900 text-white border-gray-700' : 'bg-white text-gray-900 border-gray-200'
                     } [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]`}
                   >
-                    {/* Sticky Header with Close Button */}
                     <div className="sticky top-0 z-10 flex justify-end p-4">
                       <button 
                         onClick={() => {
@@ -448,14 +469,10 @@ function App() {
                         <FaTimes size={24} />
                       </button>
                     </div>
-
                     <div className="px-6 pb-12 md:px-12">
-                      {/* Article Header Image */}
                       <div className="w-full h-64 md:h-96 rounded-2xl overflow-hidden mb-8 shadow-inner">
                         <img src={selectedBlog.image} alt={selectedBlog.title} className="w-full h-full object-cover" />
                       </div>
-
-                      {/* Tags & Meta */}
                       <div className="flex flex-wrap gap-2 mb-4">
                         {selectedBlog.tags.map((tag, idx) => (
                           <span key={idx} className="text-xs font-bold uppercase tracking-wider text-blue-500 bg-blue-500/10 px-3 py-1 rounded-md">
@@ -463,21 +480,16 @@ function App() {
                           </span>
                         ))}
                       </div>
-
                       <h1 className="text-3xl md:text-5xl font-black mb-6 leading-tight">
                         {selectedBlog.title}
                       </h1>
-
                       <div className="flex items-center gap-6 mb-8 pb-8 border-b border-gray-500/20 text-sm font-medium opacity-70">
                         <div className="flex items-center gap-2"><FaClock className="text-blue-500" /> {selectedBlog.readTime}</div>
                         <div>{selectedBlog.date}</div>
                       </div>
-
-                      {/* Article Content */}
                       <div className={`text-lg leading-relaxed whitespace-pre-line font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                         {selectedBlog.content}
                       </div>
-                      
                     </div>
                   </div>
                 </div>
@@ -488,24 +500,18 @@ function App() {
           {/* ABOUT PAGE */}
           {activePage === 'about' && (
             <div className='flex flex-col md:flex-row gap-6'>
-
-              {/* MAIN CONTENT - Left Side */}
               <div className='flex-1 flex flex-col gap-6'>
-
-                {/* Introduction Section */}
                 <div className={`overflow-hidden rounded-2xl shadow-xl border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
                   <div className='relative h-48 md:h-60 w-full overflow-hidden'>
                     <img src={cover} alt='Cover' className='w-full h-full object-cover' />
                     <div className='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent'></div>
                   </div>
-
                   <div className='relative p-6 pt-0'>
                     <div className='-mt-14 md:-mt-16 flex justify-center md:justify-start mb-4 relative z-10'>
                       <div className={`p-1 rounded-full ${darkMode ? 'bg-gray-800' : 'bg-white'} shadow-2xl`}>
                         <img src={profile} alt='Profile' className='w-28 h-28 md:w-32 md:h-32 rounded-full object-cover border-4 border-white dark:border-gray-800' />
                       </div>
                     </div>
-
                     <div className='text-center md:text-left'>
                       <h2 className={`text-3xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Introduction</h2>
                       <p className={`text-xl mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
@@ -518,7 +524,6 @@ function App() {
                   </div>
                 </div>
 
-                {/* Career Roadmap Section */}
                 <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
                   <h2 className={`text-2xl font-bold mb-10 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Career Roadmap</h2>
                   <div className="relative px-2">
@@ -557,7 +562,6 @@ function App() {
                   </div>
                 </div>
 
-                {/* Skill Set Section */}
                 <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
                   <h2 className={`text-2xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Skill Set</h2>
                   <div className='grid grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4'>
@@ -577,10 +581,7 @@ function App() {
                 </div>
               </div>
 
-              {/* RIGHT COLUMN */}
               <div className='md:w-80 flex flex-col gap-6'>
-                
-                {/* Specialization Section */}
                 <div className={`overflow-hidden relative ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-2xl shadow-xl p-5 border`}>
                   <h3 className={`text-xl font-bold mb-4 flex items-center gap-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                     <div className={`p-1.5 rounded-lg ${darkMode ? 'bg-blue-500/20' : 'bg-blue-50'}`}>
@@ -588,16 +589,10 @@ function App() {
                     </div>
                     Specialization
                   </h3>
-
                   <div className='relative flex justify-center mb-6 p-6 rounded-2xl bg-gradient-to-br from-blue-500/5 to-purple-500/10 border border-blue-500/10 overflow-hidden'>
                     <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-blue-500/10 rounded-full blur-2xl"></div>
-                    <img 
-                      src={react} 
-                      alt='React' 
-                      className='w-20 h-20 object-contain drop-shadow-[0_0_15px_rgba(59,130,246,0.6)] animate-[spin_15s_linear_infinite]' 
-                    />
+                    <img src={react} alt='React' className='w-20 h-20 object-contain drop-shadow-[0_0_15px_rgba(59,130,246,0.6)] animate-[spin_15s_linear_infinite]' />
                   </div>
-
                   <div className='space-y-3 relative z-10'>
                     <h4 className={`font-bold text-lg ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Frontend Architecture</h4>
                     <p className={`text-sm leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -606,7 +601,6 @@ function App() {
                   </div>
                 </div>
 
-                {/* Education Section */}
                 <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-2xl shadow-xl p-5 border`}>
                   <div className='flex items-center gap-2 mb-6'>
                     <div className={`p-2 rounded-lg ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-50 text-blue-600'}`}>
@@ -614,9 +608,7 @@ function App() {
                     </div>
                     <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Education</h3>
                   </div>
-
                   <div className='space-y-8'>
-                    {/* College */}
                     <div className='relative'>
                       <div className='flex flex-col gap-3'>
                         <div className="flex items-center gap-4">
@@ -636,8 +628,6 @@ function App() {
                         </div>
                       </div>
                     </div>
-
-                    {/* High School */}
                     <div className='relative pt-2'>
                       <div className='flex flex-col gap-3'>
                         <div className="flex items-center gap-4">
@@ -647,7 +637,6 @@ function App() {
                             <p className={`text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>TVL - Information and Communications Technology (ICT)</p>
                           </div>
                         </div>
-                        
                         <div className='ml-[72px] space-y-2'>
                           <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 uppercase tracking-wide`}>
                             <FaTrophy size={12} className="drop-shadow-sm" /> With Highest Honor (GWA: 98)
@@ -665,7 +654,7 @@ function App() {
             </div>
           )}
 
-          {/* PROJECTS PAGE */}
+         {/* PROJECTS PAGE */}
           {activePage === 'projects' && (
             <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
               <h1 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>My Projects</h1>
@@ -708,8 +697,69 @@ function App() {
           {/* ACHIEVEMENTS PAGE */}
           {activePage === 'achievements' && (
             <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
-              <h1 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Achievements</h1>
-              <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>Achievements content to be updated...</p>
+              <h1 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Certifications</h1>
+              
+              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
+                {/* JavaScript Essentials 1 Certification */}
+                <div 
+                  onClick={() => window.open(jse, '_blank')}
+                  className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer ${
+                    darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:shadow-xl'
+                  } shadow-lg`}
+                >
+                  <div className='relative h-48 w-full overflow-hidden bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center p-4'>
+                    <img 
+                      src={jse} 
+                      alt='JavaScript Essentials 1 Certification' 
+                      className='w-full h-full object-contain'
+                    />
+                  </div>
+                  <div className='p-5'>
+                    <h3 className={`text-lg font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                      JavaScript Essentials 1
+                    </h3>
+                    <p className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      DICT-ITU DTC Initiative • Cisco Networking Academy
+                    </p>
+                    <div className='flex items-center justify-between'>
+                      <span className={`text-xs px-2 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
+                        Issued: April 14 2026
+                      </span>
+                      <FaExternalLinkAlt className='text-blue-500 text-sm' />
+                    </div>
+                  </div>
+                </div>
+
+                {/* NCII Certification - Computer Systems Servicing */}
+                <div 
+                  onClick={() => window.open(ncii, '_blank')}
+                  className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer ${
+                    darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:shadow-xl'
+                  } shadow-lg`}
+                >
+                  <div className='relative h-48 w-full overflow-hidden bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center p-4'>
+                    <img 
+                      src={ncii} 
+                      alt='NCII Computer Systems Servicing Certification' 
+                      className='w-full h-full object-contain'
+                    />
+                  </div>
+                  <div className='p-5'>
+                    <h3 className={`text-lg font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                      NCII - Computer Systems Servicing
+                    </h3>
+                    <p className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      TESDA National Certification
+                    </p>
+                    <div className='flex items-center justify-between'>
+                      <span className={`text-xs px-2 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
+                        Issued: May 13, 2024
+                      </span>
+                      <FaExternalLinkAlt className='text-blue-500 text-sm' />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -724,8 +774,6 @@ function App() {
                 <FaCode className='text-blue-500'/>
                 Skill Set
               </h3>
-              
-              {/* Frontend Row */}
               <div className='mb-4'>
                 <div className='overflow-hidden'>
                   <div className='animate-scroll-right flex gap-2 md:gap-3'>
@@ -749,8 +797,6 @@ function App() {
                   </div>
                 </div>
               </div>
-              
-              {/* Backend Row */}
               <div>
                 <div className='overflow-hidden'>
                   <div className='animate-scroll-left flex gap-2 md:gap-3'>
@@ -821,50 +867,101 @@ function App() {
       {/* CHAT WITH EMERSON WIDGET */}
       <div className="fixed bottom-6 right-6 z-[70] flex flex-col items-end">
         {chatOpen && (
-          <div className={`mb-4 w-72 md:w-80 h-96 rounded-2xl shadow-2xl flex flex-col overflow-hidden border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-            <div className="bg-blue-600 p-4 text-white flex justify-between items-center">
-              <span className="font-bold flex items-center gap-2"><FaUser size={14}/> Chat with Emerson</span>
+          <div className={`mb-4 w-72 md:w-80 rounded-2xl shadow-2xl flex flex-col overflow-hidden border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+            
+            {/* Chat Header */}
+            <div className="bg-blue-600 p-4 text-white flex justify-between items-center flex-shrink-0">
+              <span className="font-bold flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-400 inline-block animate-pulse"></span>
+                Chat with Emerson
+              </span>
               <button onClick={() => setChatOpen(false)} className="hover:scale-110 transition-transform">
                 <FaTimes size={18} />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+
+            {/* Messages Area */}
+            <div className="overflow-y-auto p-4 flex flex-col gap-3 max-h-64 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               {messages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[80%] p-2.5 rounded-2xl text-sm ${
-                    msg.role === 'user' 
-                      ? 'bg-blue-600 text-white rounded-tr-none' 
-                      : (darkMode ? 'bg-gray-700 text-gray-200 rounded-tl-none' : 'bg-gray-100 text-gray-800 rounded-tl-none')
+                  <div className={`max-w-[82%] p-2.5 rounded-2xl text-sm leading-relaxed ${
+                    msg.role === 'user'
+                      ? 'bg-blue-600 text-white rounded-tr-none'
+                      : darkMode
+                        ? 'bg-gray-700 text-gray-200 rounded-tl-none'
+                        : 'bg-gray-100 text-gray-800 rounded-tl-none'
                   }`}>
                     {msg.text}
                   </div>
                 </div>
               ))}
-              {isTyping && <div className="text-xs text-gray-400 animate-pulse">Emerson is typing...</div>}
+              {isTyping && (
+                <div className="flex justify-start">
+                  <div className={`px-4 py-2.5 rounded-2xl rounded-tl-none text-sm ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                    <span className="flex gap-1 items-center">
+                      <span className={`w-1.5 h-1.5 rounded-full animate-bounce ${darkMode ? 'bg-gray-400' : 'bg-gray-500'}`} style={{ animationDelay: '0ms' }}></span>
+                      <span className={`w-1.5 h-1.5 rounded-full animate-bounce ${darkMode ? 'bg-gray-400' : 'bg-gray-500'}`} style={{ animationDelay: '150ms' }}></span>
+                      <span className={`w-1.5 h-1.5 rounded-full animate-bounce ${darkMode ? 'bg-gray-400' : 'bg-gray-500'}`} style={{ animationDelay: '300ms' }}></span>
+                    </span>
+                  </div>
+                </div>
+              )}
               <div ref={chatEndRef} />
             </div>
-            <form onSubmit={handleSendMessage} className={`p-3 border-t ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+
+            {/* Suggestions */}
+            {showSuggestions && !isTyping && (
+              <div className={`px-3 pt-2 pb-1 flex flex-col gap-1.5 border-t ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                <p className={`text-[10px] uppercase tracking-widest font-semibold mb-0.5 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>Suggested</p>
+                {suggestions.map((s, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleSuggestionClick(s)}
+                    className={`text-xs text-left px-3 py-2 rounded-full border transition-all duration-150 active:scale-95 ${
+                      darkMode
+                        ? 'border-blue-500/40 text-blue-400 hover:bg-blue-900/30 hover:border-blue-400'
+                        : 'border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-500'
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Input */}
+            <form onSubmit={handleSendMessage} className={`p-3 border-t flex-shrink-0 ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
               <div className="flex gap-2">
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={userInput}
                   onChange={(e) => setUserInput(e.target.value)}
                   placeholder="Ask me anything..."
-                  className={`flex-1 text-sm p-2 rounded-lg outline-none ${darkMode ? 'bg-gray-700 text-white' : 'bg-gray-50 text-black'}`}
+                  className={`flex-1 text-sm p-2 rounded-lg outline-none border transition-colors ${
+                    darkMode
+                      ? 'bg-gray-700 text-white border-gray-600 focus:border-blue-500'
+                      : 'bg-gray-50 text-black border-gray-200 focus:border-blue-400'
+                  }`}
                 />
-                <button type="submit" className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors">
+                <button
+                  type="submit"
+                  disabled={isTyping || !userInput.trim()}
+                  className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                >
                   <FaPaperPlane size={14}/>
                 </button>
               </div>
             </form>
           </div>
         )}
+
         {!chatOpen && (
-          <button 
+          <button
             onClick={() => setChatOpen(true)}
             className="bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform active:scale-95 flex items-center gap-2 animate-chat-float"
           >
-            <FaComments size={20}/> <span className="hidden md:inline font-medium">Chat with Emerson</span>
+            <FaComments size={20}/>
+            <span className="hidden md:inline font-medium">Chat with Emerson</span>
           </button>
         )}
       </div>
