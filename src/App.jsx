@@ -33,6 +33,7 @@ import sjnhs from './assets/sjnhs.jpg'
 import upang from './assets/upanglogo.jpg'
 import jse from './assets/jse.png'
 import ncii from './assets/ncii.png'
+import htmle from './assets/htmle.png'
 
 import portfolioimg from './assets/portfolio.png'
 import scanrx from './assets/scanrx.png'
@@ -518,7 +519,7 @@ function App() {
                         Hi, I'm <span className='font-extrabold text-blue-500'>Emerson Isla</span>
                       </p>
                       <p className={`text-md leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        An aspiring <span className='font-semibold text-blue-500'>Full-Stack Developer</span> passionate about building modern, scalable, and high-performance web applications. I enjoy turning ideas into functional digital products by combining clean code, thoughtful design, and efficient problem-solving.
+                        An aspiring <span className='font-semibold text-blue-500'>Front-end Developer</span> passionate about building modern, scalable, and high-performance web applications. I enjoy turning ideas into functional digital products by combining clean code, thoughtful design, and efficient problem-solving.
                       </p>
                     </div>
                   </div>
@@ -695,72 +696,102 @@ function App() {
           )}
 
           {/* ACHIEVEMENTS PAGE */}
-          {activePage === 'achievements' && (
-            <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
-              <h1 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Certifications</h1>
-              
-              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
-                {/* JavaScript Essentials 1 Certification */}
-                <div 
-                  onClick={() => window.open(jse, '_blank')}
-                  className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer ${
-                    darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:shadow-xl'
-                  } shadow-lg`}
-                >
-                  <div className='relative h-48 w-full overflow-hidden bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center p-4'>
-                    <img 
-                      src={jse} 
-                      alt='JavaScript Essentials 1 Certification' 
-                      className='w-full h-full object-contain'
-                    />
-                  </div>
-                  <div className='p-5'>
-                    <h3 className={`text-lg font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                      JavaScript Essentials 1
-                    </h3>
-                    <p className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      DICT-ITU DTC Initiative • Cisco Networking Academy
-                    </p>
-                    <div className='flex items-center justify-between'>
-                      <span className={`text-xs px-2 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
-                        Issued: April 14 2026
-                      </span>
-                      <FaExternalLinkAlt className='text-blue-500 text-sm' />
+            {activePage === 'achievements' && (
+              <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
+                <h1 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Certifications</h1>
+                
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
+                  {/* HTML Essentials Certification */}
+                  <div 
+                    onClick={() => window.open(htmle, '_blank')}
+                    className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer ${
+                      darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:shadow-xl'
+                    } shadow-lg`}
+                  >
+                    <div className='relative h-48 w-full overflow-hidden bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center p-4'>
+                      <img 
+                        src={htmle} 
+                        alt='HTML Essentials Certification' 
+                        className='w-full h-full object-contain'
+                      />
+                    </div>
+                    <div className='p-5'>
+                      <h3 className={`text-lg font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                        HTML Essentials
+                      </h3>
+                      <p className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                        DICT-ITU DTC Initiative • Cisco Networking Academy
+                      </p>
+                      <div className='flex items-center justify-between'>
+                        <span className={`text-xs px-2 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
+                          Issued: April 17, 2026
+                        </span>
+                        <FaExternalLinkAlt className='text-blue-500 text-sm' />
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* NCII Certification - Computer Systems Servicing */}
-                <div 
-                  onClick={() => window.open(ncii, '_blank')}
-                  className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer ${
-                    darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:shadow-xl'
-                  } shadow-lg`}
-                >
-                  <div className='relative h-48 w-full overflow-hidden bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center p-4'>
-                    <img 
-                      src={ncii} 
-                      alt='NCII Computer Systems Servicing Certification' 
-                      className='w-full h-full object-contain'
-                    />
+                  {/* JavaScript Essentials 1 Certification */}
+                  <div 
+                    onClick={() => window.open(jse, '_blank')}
+                    className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer ${
+                      darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:shadow-xl'
+                    } shadow-lg`}
+                  >
+                    <div className='relative h-48 w-full overflow-hidden bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center p-4'>
+                      <img 
+                        src={jse} 
+                        alt='JavaScript Essentials 1 Certification' 
+                        className='w-full h-full object-contain'
+                      />
+                    </div>
+                    <div className='p-5'>
+                      <h3 className={`text-lg font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                        JavaScript Essentials 1
+                      </h3>
+                      <p className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                        DICT-ITU DTC Initiative • Cisco Networking Academy
+                      </p>
+                      <div className='flex items-center justify-between'>
+                        <span className={`text-xs px-2 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
+                          Issued: April 14, 2026
+                        </span>
+                        <FaExternalLinkAlt className='text-blue-500 text-sm' />
+                      </div>
+                    </div>
                   </div>
-                  <div className='p-5'>
-                    <h3 className={`text-lg font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                      NCII - Computer Systems Servicing
-                    </h3>
-                    <p className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      TESDA National Certification
-                    </p>
-                    <div className='flex items-center justify-between'>
-                      <span className={`text-xs px-2 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
-                        Issued: May 13, 2024
-                      </span>
-                      <FaExternalLinkAlt className='text-blue-500 text-sm' />
+
+                  {/* NCII Certification - Computer Systems Servicing */}
+                  <div 
+                    onClick={() => window.open(ncii, '_blank')}
+                    className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer ${
+                      darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:shadow-xl'
+                    } shadow-lg`}
+                  >
+                    <div className='relative h-48 w-full overflow-hidden bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center p-4'>
+                      <img 
+                        src={ncii} 
+                        alt='NCII Computer Systems Servicing Certification' 
+                        className='w-full h-full object-contain'
+                      />
+                    </div>
+                    <div className='p-5'>
+                      <h3 className={`text-lg font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                        NCII - Computer Systems Servicing
+                      </h3>
+                      <p className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                        TESDA National Certification
+                      </p>
+                      <div className='flex items-center justify-between'>
+                        <span className={`text-xs px-2 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
+                          Issued: May 13, 2024
+                        </span>
+                        <FaExternalLinkAlt className='text-blue-500 text-sm' />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
           )}
         </div>
 
@@ -872,7 +903,7 @@ function App() {
             {/* Chat Header */}
             <div className="bg-blue-600 p-4 text-white flex justify-between items-center flex-shrink-0">
               <span className="font-bold flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-400 inline-block animate-pulse"></span>
+                <span className="w-2 h-2 rounded-full bg-green-400 inline-block"></span>
                 Chat with Emerson
               </span>
               <button onClick={() => setChatOpen(false)} className="hover:scale-110 transition-transform">

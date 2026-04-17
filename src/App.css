@@ -232,22 +232,6 @@
   animation-play-state: paused;
 }
 
-/* Chat button floating up and down animation */
-@keyframes chatFloat {
-  0% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
-}
-
-.animate-chat-float {
-  animation: chatFloat 3s ease-in-out infinite;
-}
 
 /* Customizing Splide Arrows to match Portfolio Theme */
 .blog-carousel-container .splide__arrow {
