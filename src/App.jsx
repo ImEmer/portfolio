@@ -27,6 +27,9 @@ import tailwind from './assets/tailwind.png'
 import bootstrap from './assets/bootstrap.png'
 import node from './assets/node.png'
 import mysql from './assets/mysql.png'
+import flutter from './assets/flutter.png'
+import dart from './assets/dart.png'
+import sqlite from './assets/sqlite.png'
 
 import cover from './assets/cover.jpg'
 import sjnhs from './assets/sjnhs.jpg'
@@ -41,6 +44,12 @@ import timplangpinoy from './assets/timplangpinoy.png'
 import unitaskmanager from './assets/unitaskmanager.png'
 import chronomaster from './assets/chronomaster.png'
 import macromonitor from './assets/macromonitor.png'
+import monkita from './assets/monkita.png'
+import monkita1 from './assets/monkita1.jpg'
+import monkita2 from './assets/monkita2.jpg'
+import monkita3 from './assets/monkita3.jpg'
+import monkita4 from './assets/monkita4.jpg'
+import monkita5 from './assets/monkita5.jpg'
 
 import splide1 from './assets/splide1.jpg'
 import splide2 from './assets/splide2.jpg'
@@ -77,6 +86,9 @@ function App() {
   const chatEndRef = useRef(null)
   const idleTimerRef = useRef(null)
 
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedBlog, setSelectedBlog] = useState(null);
+
   const texts = [
     'Hey, Welcome to my portfolio',
     'Explore my work and ideas',
@@ -85,59 +97,112 @@ function App() {
 
   const careerStats = [
     { label: 'Experience', value: 0, icon: FaBriefcase, unit: ' years', color: 'text-blue-500', bgColor: 'bg-blue-100', darkBgColor: 'bg-blue-900/30' },
-    { label: 'Certificates', value: 0, icon: FaCertificate, unit: '', color: 'text-green-500', bgColor: 'bg-green-100', darkBgColor: 'bg-green-900/30' },
-    { label: 'Projects', value: 6, icon: FaProjectDiagram, unit: '', color: 'text-purple-500', bgColor: 'bg-purple-100', darkBgColor: 'bg-purple-900/30' },
-    { label: 'Technologies', value: 14, icon: FaLaptopCode, unit: '+', color: 'text-orange-500', bgColor: 'bg-orange-100', darkBgColor: 'bg-orange-900/30' }
+    { label: 'Certificates', value: 3, icon: FaCertificate, unit: '', color: 'text-green-500', bgColor: 'bg-green-100', darkBgColor: 'bg-green-900/30' },
+    { label: 'Projects', value: 7, icon: FaProjectDiagram, unit: '', color: 'text-purple-500', bgColor: 'bg-purple-100', darkBgColor: 'bg-purple-900/30' },
+    { label: 'Technologies', value: 17, icon: FaLaptopCode, unit: '+', color: 'text-orange-500', bgColor: 'bg-orange-100', darkBgColor: 'bg-orange-900/30' }
   ]
 
-  const projects = [
-    {
-      name: 'Personal Portfolio',
-      description: 'My personal portfolio website showcasing my skills, projects, and experience as a developer. Built with modern web technologies.',
-      tech: ['React', 'Vite', 'Tailwind'],
-      year: '2026',
-      image: portfolioimg
-    },
-    {
-      name: 'ScanRx',
-      description: 'A mobile application for scanning and managing prescription medications.',
-      tech: ['Kotlin', 'XML'],
-      year: '2026',
-      image: scanrx
-    },
-    {
-      name: 'MacroMonitor',
-      description: 'A web application for tracking macros and nutrition.',
-      tech: ['PHP', 'MySQL', 'Tailwind', 'JavaScript'],
-      year: '2025',
-      image: macromonitor
-    },
-    {
-      name: 'UniTask Manager',
-      description: 'A Java-based task management application for organizing daily activities and university tasks.',
-      tech: ['Java'],
-      year: '2025',
-      image: unitaskmanager
-    },
-    {
-      name: 'Timplang Pinoy',
-      description: 'A Filipino recipe website featuring traditional dishes and cooking tutorials.',
-      tech: ['HTML', 'CSS', 'JavaScript'],
-      year: '2025',
-      image: timplangpinoy
-    },
-    {
-      name: 'Chrono Master',
-      description: 'A Python-based time management tool with productivity features.',
-      tech: ['Python'],
-      year: '2025',
-      image: chronomaster
-    }
-  ]
-
-  const [selectedBlog, setSelectedBlog] = useState(null);
-  const [blogContent, setBlogContent] = useState('')
-  const [loadingBlog, setLoadingBlog] = useState(false)
+        const projects = [
+        {
+          name: 'Monkita',
+          shortDesc: 'A lending management app to track loans, payments, and borrower records.',
+          fullDesc: [
+            'Monkita is a lending management application designed to help small-scale lenders efficiently track loans, payments, and borrower records. The system focuses on simplicity and long-term usability, allowing users to manage different loan types with varying terms, interest rates, and payment schedules. It digitizes traditional lending practices to reduce manual errors and improve record accuracy.',
+            'The application is built with a focus on reliability and scalability, ensuring that data remains organized even with long-term use. It supports structured tracking of borrower history and payment progress, making it easier to monitor financial activity and maintain consistent lending operations over time.'
+          ],
+          tech: ['Flutter', 'Dart', 'SQLite'],
+          year: '2026',
+          image: monkita,
+          type: 'Client Project',
+          semester: null,
+          previewUrl: null,
+          extraImages: [monkita1, monkita2, monkita3, monkita4, monkita5]
+        },
+        {
+          name: 'Personal Portfolio',
+          shortDesc: 'A responsive portfolio showcasing my skills, projects, and experience.',
+          fullDesc: [
+            'My personal portfolio is a web-based platform that showcases my skills, projects, certifications, and experiences as an aspiring web and mobile developer. It is designed with a clean, modern interface that highlights my technical capabilities while maintaining a professional presentation.',
+            'The portfolio is also responsive, ensuring accessibility across different devices such as mobile phones, tablets, and desktops. It serves as a central hub for my work, allowing potential employers or collaborators to easily explore my projects and track my growth as a developer.'
+          ],
+          tech: ['React', 'Vite', 'Tailwind'],
+          year: '2026',
+          image: portfolioimg,
+          type: 'Self Project',
+          semester: null,
+          previewUrl: null
+        },
+        {
+          name: 'ScanRx',
+          shortDesc: 'A prescription scanning app that retrieves medicine information.',
+          fullDesc: [
+            'ScanRx is a concept-based application aimed at improving healthcare accessibility by allowing users to scan prescriptions and retrieve relevant medicine information. It helps users better understand prescribed medications, reducing confusion and promoting safer usage.',
+            'The system focuses on simplifying complex medical details into user-friendly information. It demonstrates my interest in developing solutions that address real-world problems, particularly in the healthcare space, through the use of technology.'
+          ],
+          tech: ['Kotlin', 'XML'],
+          year: '2026',
+          image: scanrx,
+          type: 'School Final Project',
+          semester: '2nd Year, 2nd Sem',
+          previewUrl: null
+        },
+        {
+          name: 'MacroMonitor',
+          shortDesc: 'A health app to track macronutrients and support diet management.',
+          fullDesc: [
+            'MacroMonitor is a health-focused application designed to track macronutrients such as carbohydrates, proteins, and fats to support users in managing their diet and overall wellness. It allows users to monitor their daily intake and gain insights into their nutritional habits.',
+            'The application emphasizes data tracking and visualization to help users make informed health decisions. This project showcases my ability to develop systems that combine health awareness with practical digital tools for everyday use.'
+          ],
+          tech: ['PHP', 'MySQL', 'Tailwind', 'JavaScript'],
+          year: '2025',
+          image: macromonitor,
+          type: 'School Final Project',
+          semester: '2nd Year, 1st Sem',
+          previewUrl: 'https://your-macromonitor-demo.com' // Replace with actual URL
+        },
+        {
+          name: 'Timplang Pinoy',
+          shortDesc: 'A Filipino recipe website showcasing traditional dishes and culture.',
+          fullDesc: [
+            'Timplang Pinoy is a recipe website that promotes Filipino cuisine by showcasing traditional dishes along with their cultural significance. It features categorized recipes, step-by-step guides, and engaging visuals that make it easy for users to explore and learn about local dishes.',
+            'The platform also includes a dedicated culture section that highlights the history and importance of Filipino food traditions. This project reflects my ability to combine web development skills with cultural storytelling, creating both an informative and visually appealing user experience.'
+          ],
+          tech: ['HTML', 'CSS', 'JavaScript'],
+          year: '2025',
+          image: timplangpinoy,
+          type: 'School Final Project',
+          semester: '1st Year, 2nd Sem',
+          previewUrl: 'https://your-timplangpinoy-demo.com' // Replace with actual URL
+        },
+        {
+          name: 'UniTask Manager',
+          shortDesc: 'A Java-based task manager to organize daily responsibilities.',
+          fullDesc: [
+            'UniTaskManager is a task management application developed using Java that helps users organize their daily responsibilities, set deadlines, and track task progress efficiently. It provides a structured system for managing workloads in a simple and intuitive interface.',
+            'The project highlights my skills in Java programming and application development, focusing on functionality, usability, and organization. It demonstrates my ability to create productivity tools that support users in staying organized and meeting their goals effectively.'
+          ],
+          tech: ['Java'],
+          year: '2025',
+          image: unitaskmanager,
+          type: 'School Final Project',
+          semester: '1st Year, 2nd Sem',
+          previewUrl: null
+        },
+        {
+          name: 'Chrono Master',
+          shortDesc: 'A mobile stopwatch and timer app with a user-friendly interface.',
+          fullDesc: [
+            'Chrono Master is a mobile application developed using python that provides stopwatch and timer functionalities in a single, user-friendly interface. The app allows users to easily switch between modes, with visual indicators and dynamic UI changes that improve usability and interaction.',
+            'The project demonstrates my skills in mobile app development, particularly in handling user input, managing time-based functions, and designing responsive interfaces. It highlights my ability to create practical applications that combine functionality with intuitive design on the Android platform.'
+          ],
+          tech: ['Python'],
+          year: '2025',
+          image: chronomaster,
+          type: 'School Final Project',
+          semester: '1st Year, 1st Sem',
+          previewUrl: null
+        }
+      ];
 
   const blogSplideOptions = {
     type: 'slide',
@@ -168,6 +233,9 @@ function App() {
       case 'Bootstrap': return bootstrap;
       case 'Node': return node;
       case 'MySQL': return mysql;
+      case 'Flutter': return flutter;
+      case 'Dart': return dart;
+      case 'SQLite': return sqlite;
       default: return null;
     }
   }
@@ -203,13 +271,13 @@ function App() {
   }, [])
 
   useEffect(() => {
-  AOS.init({
-    duration: 1000,
-    offset: 100,
-    once: true,
-    easing: 'ease-in-out',
-  });
-}, []);
+    AOS.init({
+      duration: 1000,
+      offset: 100,
+      once: true,
+      easing: 'ease-in-out',
+    });
+  }, []);
 
   useEffect(() => {
     const currentFullText = texts[textIndex]
@@ -565,13 +633,14 @@ function App() {
 
                 <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
                   <h2 className={`text-2xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Skill Set</h2>
-                  <div className='grid grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4'>
+                  <div className='grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4'>
                     {[
                       { name: 'HTML', img: html }, { name: 'CSS', img: css }, { name: 'JS', img: javascript },
                       { name: 'React', img: react }, { name: 'Tailwind', img: tailwind }, { name: 'Bootstrap', img: bootstrap },
                       { name: 'Vite', img: vite }, { name: 'PHP', img: php }, { name: 'Python', img: python },
                       { name: 'Java', img: java }, { name: 'Kotlin', img: kotlin }, { name: 'Node', img: node },
-                      { name: 'MySQL', img: mysql }, { name: 'XML', img: xml }
+                      { name: 'MySQL', img: mysql }, { name: 'XML', img: xml }, { name: 'Flutter', img: flutter }, 
+                      { name: 'Dart', img: dart }, { name: 'SQLite', img: sqlite }
                     ].map((tech, idx) => (
                       <div key={idx} className={`flex flex-col items-center p-3 rounded-lg ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
                         <img src={tech.img} alt={tech.name} className='w-12 h-12 md:w-14 md:h-14 object-contain mb-2' />
@@ -654,144 +723,237 @@ function App() {
               </div>
             </div>
           )}
-
-         {/* PROJECTS PAGE */}
-          {activePage === 'projects' && (
-            <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
-              <h1 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>My Projects</h1>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                {projects.map((project, idx) => (
-                  <div key={idx} className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] ${darkMode ? 'bg-gray-700' : 'bg-gray-50'} shadow-lg`}>
-                    <div className='h-48 w-full overflow-hidden'>
-                      <img 
-                        src={project.image} 
-                        alt={project.name} 
-                        className='w-full h-full object-cover hover:scale-105 transition-transform duration-300'
-                      />
-                    </div>
-                    <div className='p-5'>
-                      <div className='flex justify-between items-start mb-3'>
-                        <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{project.name}</h2>
-                        <span className={`text-xs px-3 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>{project.year}</span>
-                      </div>
-                      <p className={`text-sm mb-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{project.description}</p>
-                      <div className='flex flex-wrap gap-2 mb-4'>
-                        {project.tech.map((tech, techIdx) => (
-                          <div key={techIdx} className='flex items-center gap-1 px-2 py-1 rounded-lg bg-blue-500/10'>
-                            <img src={getTechLogo(tech)} alt={tech} className='w-4 h-4 object-contain' />
-                            <span className={`text-xs ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{tech}</span>
-                          </div>
-                        ))}
-                      </div>
-                      <div className='flex gap-3'>
-                        <button className='flex items-center gap-1 text-sm text-blue-500 hover:text-blue-600 transition-colors'>
-                          <FaGithub /> GitHub
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+             // ==================== PROJECTS PAGE JSX (replace the existing block) ====================
+{activePage === 'projects' && (
+  <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
+    <h1 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>My Projects</h1>
+    <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+      {projects.map((project, idx) => (
+        <div 
+          key={idx} 
+          onClick={() => {
+            setSelectedProject(project);
+            document.body.style.overflow = 'hidden';
+          }}
+          className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] cursor-pointer ${darkMode ? 'bg-gray-700' : 'bg-gray-50'} shadow-lg`}
+        >
+          <div className='h-48 w-full overflow-hidden'>
+            <img 
+              src={project.image} 
+              alt={project.name} 
+              className='w-full h-full object-cover hover:scale-105 transition-transform duration-300'
+            />
+          </div>
+          <div className='p-5'>
+            <div className='flex justify-between items-start mb-3'>
+              <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{project.name}</h2>
+              <span className={`text-xs px-3 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>{project.year}</span>
             </div>
+            {/* SHORT DESCRIPTION ON CARD */}
+            <p className={`text-sm mb-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{project.shortDesc}</p>
+            <div className='flex flex-wrap gap-2 mb-4'>
+              {project.tech.map((tech, techIdx) => (
+                <div key={techIdx} className='flex items-center gap-1 px-2 py-1 rounded-lg bg-blue-500/10'>
+                  <img src={getTechLogo(tech)} alt={tech} className='w-4 h-4 object-contain' />
+                  <span className={`text-xs ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{tech}</span>
+                </div>
+              ))}
+            </div>
+            <div className='flex gap-3'>
+              <button className='flex items-center gap-1 text-sm text-blue-500 hover:text-blue-600 transition-colors'>
+                <FaGithub /> GitHub
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+// ==================== PROJECT MODAL JSX (replace the existing modal block) ====================
+{selectedProject && (
+  <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 md:p-10 bg-black/70 backdrop-blur-sm transition-all duration-300">
+    <div 
+      className={`relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl transition-all duration-300 border ${
+        darkMode ? 'bg-gray-900 text-white border-gray-700' : 'bg-white text-gray-900 border-gray-200'
+      } [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]`}
+    >
+      <div className="sticky top-0 z-10 flex justify-end p-4 bg-inherit">
+        <button 
+          onClick={() => {
+            setSelectedProject(null);
+            document.body.style.overflow = 'auto';
+          }}
+          className={`p-2 rounded-full backdrop-blur-md transition-colors ${
+            darkMode ? 'bg-gray-800/50 hover:bg-gray-700 text-white' : 'bg-gray-100/50 hover:bg-gray-200 text-gray-900'
+          }`}
+        >
+          <FaTimes size={24} />
+        </button>
+      </div>
+      <div className="px-6 pb-12 md:px-12">
+        {/* Larger main image */}
+        <div className="w-full h-80 md:h-[32rem] rounded-2xl overflow-hidden mb-8 shadow-inner">
+          <img src={selectedProject.image} alt={selectedProject.name} className="w-full h-full object-cover" />
+        </div>
+        
+        {/* Title and preview button */}
+        <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
+          <h1 className="text-3xl md:text-5xl font-black leading-tight">{selectedProject.name}</h1>
+          {selectedProject.previewUrl ? (
+            <a 
+              href={selectedProject.previewUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition text-sm font-semibold"
+            >
+              Preview
+            </a>
+          ) : (
+            <button 
+              disabled 
+              className="px-5 py-2 rounded-full bg-gray-400 text-white cursor-not-allowed opacity-60 text-sm font-semibold"
+            >
+              No Preview
+            </button>
           )}
+        </div>
+
+        {/* Project type & semester */}
+        <div className="mb-6 p-4 rounded-xl bg-gray-100 dark:bg-gray-800">
+          <p className="text-xs uppercase tracking-wider opacity-60">{selectedProject.type}</p>
+          {selectedProject.semester && (
+            <p className="font-semibold text-lg">{selectedProject.semester}</p>
+          )}
+        </div>
+
+        {/* FULL DESCRIPTION (2 paragraphs) */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-3">Project Description</h2>
+          {selectedProject.fullDesc.map((para, idx) => (
+            <p key={idx} className={`text-lg leading-relaxed mb-4 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+              {para}
+            </p>
+          ))}
+        </div>
+
+        {/* Gallery - only for Monkita */}
+        {selectedProject.extraImages && selectedProject.extraImages.length > 0 && (
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Project Gallery</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {selectedProject.extraImages.map((img, i) => (
+                <div key={i} className="rounded-xl overflow-hidden shadow-md hover:scale-105 transition-transform">
+                  <img src={img} alt={`${selectedProject.name} screenshot ${i+1}`} className="w-full h-32 object-cover" />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+)}
+
 
           {/* ACHIEVEMENTS PAGE */}
-            {activePage === 'achievements' && (
-              <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
-                <h1 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Certifications</h1>
-                
-                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
-                  {/* HTML Essentials Certification */}
-                  <div 
-                    onClick={() => window.open(htmle, '_blank')}
-                    className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer ${
-                      darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:shadow-xl'
-                    } shadow-lg`}
-                  >
-                    <div className='relative h-48 w-full overflow-hidden bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center p-4'>
-                      <img 
-                        src={htmle} 
-                        alt='HTML Essentials Certification' 
-                        className='w-full h-full object-contain'
-                      />
-                    </div>
-                    <div className='p-5'>
-                      <h3 className={`text-lg font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                        HTML Essentials
-                      </h3>
-                      <p className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        DICT-ITU DTC Initiative • Cisco Networking Academy
-                      </p>
-                      <div className='flex items-center justify-between'>
-                        <span className={`text-xs px-2 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
-                          Issued: April 17, 2026
-                        </span>
-                        <FaExternalLinkAlt className='text-blue-500 text-sm' />
-                      </div>
+          {activePage === 'achievements' && (
+            <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
+              <h1 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Certifications</h1>
+              
+              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
+                {/* HTML Essentials Certification */}
+                <div 
+                  onClick={() => window.open(htmle, '_blank')}
+                  className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer ${
+                    darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:shadow-xl'
+                  } shadow-lg`}
+                >
+                  <div className='relative h-48 w-full overflow-hidden bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center p-4'>
+                    <img 
+                      src={htmle} 
+                      alt='HTML Essentials Certification' 
+                      className='w-full h-full object-contain'
+                    />
+                  </div>
+                  <div className='p-5'>
+                    <h3 className={`text-lg font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                      HTML Essentials
+                    </h3>
+                    <p className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      DICT-ITU DTC Initiative • Cisco Networking Academy
+                    </p>
+                    <div className='flex items-center justify-between'>
+                      <span className={`text-xs px-2 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
+                        Issued: April 17, 2026
+                      </span>
+                      <FaExternalLinkAlt className='text-blue-500 text-sm' />
                     </div>
                   </div>
+                </div>
 
-                  {/* JavaScript Essentials 1 Certification */}
-                  <div 
-                    onClick={() => window.open(jse, '_blank')}
-                    className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer ${
-                      darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:shadow-xl'
-                    } shadow-lg`}
-                  >
-                    <div className='relative h-48 w-full overflow-hidden bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center p-4'>
-                      <img 
-                        src={jse} 
-                        alt='JavaScript Essentials 1 Certification' 
-                        className='w-full h-full object-contain'
-                      />
-                    </div>
-                    <div className='p-5'>
-                      <h3 className={`text-lg font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                        JavaScript Essentials 1
-                      </h3>
-                      <p className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        DICT-ITU DTC Initiative • Cisco Networking Academy
-                      </p>
-                      <div className='flex items-center justify-between'>
-                        <span className={`text-xs px-2 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
-                          Issued: April 14, 2026
-                        </span>
-                        <FaExternalLinkAlt className='text-blue-500 text-sm' />
-                      </div>
+                {/* JavaScript Essentials 1 Certification */}
+                <div 
+                  onClick={() => window.open(jse, '_blank')}
+                  className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer ${
+                    darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:shadow-xl'
+                  } shadow-lg`}
+                >
+                  <div className='relative h-48 w-full overflow-hidden bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center p-4'>
+                    <img 
+                      src={jse} 
+                      alt='JavaScript Essentials 1 Certification' 
+                      className='w-full h-full object-contain'
+                    />
+                  </div>
+                  <div className='p-5'>
+                    <h3 className={`text-lg font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                      JavaScript Essentials 1
+                    </h3>
+                    <p className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      DICT-ITU DTC Initiative • Cisco Networking Academy
+                    </p>
+                    <div className='flex items-center justify-between'>
+                      <span className={`text-xs px-2 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
+                        Issued: April 14, 2026
+                      </span>
+                      <FaExternalLinkAlt className='text-blue-500 text-sm' />
                     </div>
                   </div>
+                </div>
 
-                  {/* NCII Certification - Computer Systems Servicing */}
-                  <div 
-                    onClick={() => window.open(ncii, '_blank')}
-                    className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer ${
-                      darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:shadow-xl'
-                    } shadow-lg`}
-                  >
-                    <div className='relative h-48 w-full overflow-hidden bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center p-4'>
-                      <img 
-                        src={ncii} 
-                        alt='NCII Computer Systems Servicing Certification' 
-                        className='w-full h-full object-contain'
-                      />
-                    </div>
-                    <div className='p-5'>
-                      <h3 className={`text-lg font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                        NCII - Computer Systems Servicing
-                      </h3>
-                      <p className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        TESDA National Certification
-                      </p>
-                      <div className='flex items-center justify-between'>
-                        <span className={`text-xs px-2 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
-                          Issued: May 13, 2024
-                        </span>
-                        <FaExternalLinkAlt className='text-blue-500 text-sm' />
-                      </div>
+                {/* NCII Certification - Computer Systems Servicing */}
+                <div 
+                  onClick={() => window.open(ncii, '_blank')}
+                  className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer ${
+                    darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:shadow-xl'
+                  } shadow-lg`}
+                >
+                  <div className='relative h-48 w-full overflow-hidden bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center p-4'>
+                    <img 
+                      src={ncii} 
+                      alt='NCII Computer Systems Servicing Certification' 
+                      className='w-full h-full object-contain'
+                    />
+                  </div>
+                  <div className='p-5'>
+                    <h3 className={`text-lg font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                      NCII - Computer Systems Servicing
+                    </h3>
+                    <p className={`text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      TESDA National Certification
+                    </p>
+                    <div className='flex items-center justify-between'>
+                      <span className={`text-xs px-2 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>
+                        Issued: May 13, 2024
+                      </span>
+                      <FaExternalLinkAlt className='text-blue-500 text-sm' />
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
           )}
         </div>
 
@@ -831,13 +993,15 @@ function App() {
               <div>
                 <div className='overflow-hidden'>
                   <div className='animate-scroll-left flex gap-2 md:gap-3'>
-                    {[...['PHP', 'Python', 'Java', 'Kotlin', 'Node', 'MySQL', 'XML'], 
-                      ...['PHP', 'Python', 'Java', 'Kotlin', 'Node', 'MySQL', 'XML']].map((skill, index) => {
+                    {[...['PHP', 'Python', 'Java', 'Kotlin', 'Node', 'MySQL', 'XML', 'Flutter', 'Dart', 'SQLite'], 
+                      ...['PHP', 'Python', 'Java', 'Kotlin', 'Node', 'MySQL', 'XML', 'Flutter', 'Dart', 'SQLite']].map((skill, index) => {
                       const getSkillImage = (skillName) => {
                         switch(skillName) {
                           case 'PHP': return php; case 'Python': return python; case 'Java': return java;
                           case 'Kotlin': return kotlin; case 'Node': return node; case 'MySQL': return mysql;
-                          case 'XML': return xml; default: return null;
+                          case 'XML': return xml; case 'Flutter': return flutter; case 'Dart': return dart;
+                          case 'SQLite': return sqlite;
+                          default: return null;
                         }
                       }
                       return (
