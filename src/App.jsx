@@ -3,7 +3,7 @@ import {
   FaHome, FaUser, FaTrophy, FaProjectDiagram, FaDownload, FaMoon, FaSun,
   FaCalendarAlt, FaBriefcase, FaCertificate, FaCode, FaLaptopCode, FaChartLine,
   FaBars, FaTimes, FaArrowUp, FaComments, FaPaperPlane, FaExternalLinkAlt, FaGithub, 
-  FaGraduationCap, FaSchool, FaBolt, FaBookOpen, FaClock, FaArrowRight
+  FaGraduationCap, FaSchool, FaBolt, FaBookOpen, FaClock, FaArrowRight, FaExpand, FaInfoCircle
 } from 'react-icons/fa'
 
 import { Splide, SplideSlide } from '@splidejs/react-splide'
@@ -44,12 +44,48 @@ import timplangpinoy from './assets/timplangpinoy.png'
 import unitaskmanager from './assets/unitaskmanager.png'
 import chronomaster from './assets/chronomaster.png'
 import macromonitor from './assets/macromonitor.png'
-import monkita from './assets/monkita.png'
-import monkita1 from './assets/monkita1.jpg'
-import monkita2 from './assets/monkita2.jpg'
-import monkita3 from './assets/monkita3.jpg'
-import monkita4 from './assets/monkita4.jpg'
-import monkita5 from './assets/monkita5.jpg'
+
+// Payra assets
+import payraLogo from './assets/payra_logo.png'
+import payra1 from './assets/payra1.jpg'
+import payra2 from './assets/payra2.jpg'
+import payra3 from './assets/payra3.jpg'
+import payra4 from './assets/payra4.jpg'
+import payra5 from './assets/payra5.jpg'
+import payra6 from './assets/payra6.jpg'
+import payra7 from './assets/payra7.jpg'
+import payra8 from './assets/payra8.jpg'
+import payra9 from './assets/payra9.jpg'
+
+// ScanRx gallery
+import scanrx1 from './assets/scanrx1.jpg'
+import scanrx2 from './assets/scanrx2.jpg'
+import scanrx3 from './assets/scanrx3.jpg'
+import scanrx4 from './assets/scanrx4.jpg'
+import scanrx5 from './assets/scanrx5.jpg'
+
+// Chrono Master gallery
+import chronomaster1 from './assets/chronomaster1.jpg'
+
+// UniTask Manager gallery
+import unitaskmanager1 from './assets/unitaskmanager1.png'
+import unitaskmanager2 from './assets/unitaskmanager2.png'
+import unitaskmanager3 from './assets/unitaskmanager3.png'
+import unitaskmanager4 from './assets/unitaskmanager4.png'
+import unitaskmanager5 from './assets/unitaskmanager5.png'
+import unitaskmanager6 from './assets/unitaskmanager6.png'
+
+// Timplang Pinoy gallery
+import tp1 from './assets/tp1.png'
+import tp2 from './assets/tp2.png'
+import tp3 from './assets/tp3.png'
+import tp4 from './assets/tp4.png'
+import tp5 from './assets/tp5.png'
+import tp6 from './assets/tp6.png'
+import tp7 from './assets/tp7.png'
+
+// MacroMonitor gallery
+import macromonitor1 from './assets/macromonitor1.png'
 
 import splide1 from './assets/splide1.jpg'
 import splide2 from './assets/splide2.jpg'
@@ -88,6 +124,7 @@ function App() {
 
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedBlog, setSelectedBlog] = useState(null);
+  const [fullscreenImage, setFullscreenImage] = useState(null);
 
   const texts = [
     'Hey, Welcome to my portfolio',
@@ -102,107 +139,113 @@ function App() {
     { label: 'Technologies', value: 17, icon: FaLaptopCode, unit: '+', color: 'text-orange-500', bgColor: 'bg-orange-100', darkBgColor: 'bg-orange-900/30' }
   ]
 
-        const projects = [
-        {
-          name: 'Monkita',
-          shortDesc: 'A lending management app to track loans, payments, and borrower records.',
-          fullDesc: [
-            'Monkita is a lending management application designed to help small-scale lenders efficiently track loans, payments, and borrower records. The system focuses on simplicity and long-term usability, allowing users to manage different loan types with varying terms, interest rates, and payment schedules. It digitizes traditional lending practices to reduce manual errors and improve record accuracy.',
-            'The application is built with a focus on reliability and scalability, ensuring that data remains organized even with long-term use. It supports structured tracking of borrower history and payment progress, making it easier to monitor financial activity and maintain consistent lending operations over time.'
-          ],
-          tech: ['Flutter', 'Dart', 'SQLite'],
-          year: '2026',
-          image: monkita,
-          type: 'Client Project',
-          semester: null,
-          previewUrl: null,
-          extraImages: [monkita1, monkita2, monkita3, monkita4, monkita5]
-        },
-        {
-          name: 'Personal Portfolio',
-          shortDesc: 'A responsive portfolio showcasing my skills, projects, and experience.',
-          fullDesc: [
-            'My personal portfolio is a web-based platform that showcases my skills, projects, certifications, and experiences as an aspiring web and mobile developer. It is designed with a clean, modern interface that highlights my technical capabilities while maintaining a professional presentation.',
-            'The portfolio is also responsive, ensuring accessibility across different devices such as mobile phones, tablets, and desktops. It serves as a central hub for my work, allowing potential employers or collaborators to easily explore my projects and track my growth as a developer.'
-          ],
-          tech: ['React', 'Vite', 'Tailwind'],
-          year: '2026',
-          image: portfolioimg,
-          type: 'Self Project',
-          semester: null,
-          previewUrl: null
-        },
-        {
-          name: 'ScanRx',
-          shortDesc: 'A prescription scanning app that retrieves medicine information.',
-          fullDesc: [
-            'ScanRx is a concept-based application aimed at improving healthcare accessibility by allowing users to scan prescriptions and retrieve relevant medicine information. It helps users better understand prescribed medications, reducing confusion and promoting safer usage.',
-            'The system focuses on simplifying complex medical details into user-friendly information. It demonstrates my interest in developing solutions that address real-world problems, particularly in the healthcare space, through the use of technology.'
-          ],
-          tech: ['Kotlin', 'XML'],
-          year: '2026',
-          image: scanrx,
-          type: 'School Final Project',
-          semester: '2nd Year, 2nd Sem',
-          previewUrl: null
-        },
-        {
-          name: 'MacroMonitor',
-          shortDesc: 'A health app to track macronutrients and support diet management.',
-          fullDesc: [
-            'MacroMonitor is a health-focused application designed to track macronutrients such as carbohydrates, proteins, and fats to support users in managing their diet and overall wellness. It allows users to monitor their daily intake and gain insights into their nutritional habits.',
-            'The application emphasizes data tracking and visualization to help users make informed health decisions. This project showcases my ability to develop systems that combine health awareness with practical digital tools for everyday use.'
-          ],
-          tech: ['PHP', 'MySQL', 'Tailwind', 'JavaScript'],
-          year: '2025',
-          image: macromonitor,
-          type: 'School Final Project',
-          semester: '2nd Year, 1st Sem',
-          previewUrl: 'https://your-macromonitor-demo.com' // Replace with actual URL
-        },
-        {
-          name: 'Timplang Pinoy',
-          shortDesc: 'A Filipino recipe website showcasing traditional dishes and culture.',
-          fullDesc: [
-            'Timplang Pinoy is a recipe website that promotes Filipino cuisine by showcasing traditional dishes along with their cultural significance. It features categorized recipes, step-by-step guides, and engaging visuals that make it easy for users to explore and learn about local dishes.',
-            'The platform also includes a dedicated culture section that highlights the history and importance of Filipino food traditions. This project reflects my ability to combine web development skills with cultural storytelling, creating both an informative and visually appealing user experience.'
-          ],
-          tech: ['HTML', 'CSS', 'JavaScript'],
-          year: '2025',
-          image: timplangpinoy,
-          type: 'School Final Project',
-          semester: '1st Year, 2nd Sem',
-          previewUrl: 'https://your-timplangpinoy-demo.com' // Replace with actual URL
-        },
-        {
-          name: 'UniTask Manager',
-          shortDesc: 'A Java-based task manager to organize daily responsibilities.',
-          fullDesc: [
-            'UniTaskManager is a task management application developed using Java that helps users organize their daily responsibilities, set deadlines, and track task progress efficiently. It provides a structured system for managing workloads in a simple and intuitive interface.',
-            'The project highlights my skills in Java programming and application development, focusing on functionality, usability, and organization. It demonstrates my ability to create productivity tools that support users in staying organized and meeting their goals effectively.'
-          ],
-          tech: ['Java'],
-          year: '2025',
-          image: unitaskmanager,
-          type: 'School Final Project',
-          semester: '1st Year, 2nd Sem',
-          previewUrl: null
-        },
-        {
-          name: 'Chrono Master',
-          shortDesc: 'A mobile stopwatch and timer app with a user-friendly interface.',
-          fullDesc: [
-            'Chrono Master is a mobile application developed using python that provides stopwatch and timer functionalities in a single, user-friendly interface. The app allows users to easily switch between modes, with visual indicators and dynamic UI changes that improve usability and interaction.',
-            'The project demonstrates my skills in mobile app development, particularly in handling user input, managing time-based functions, and designing responsive interfaces. It highlights my ability to create practical applications that combine functionality with intuitive design on the Android platform.'
-          ],
-          tech: ['Python'],
-          year: '2025',
-          image: chronomaster,
-          type: 'School Final Project',
-          semester: '1st Year, 1st Sem',
-          previewUrl: null
-        }
-      ];
+  const projects = [
+    {
+      name: 'Payra',
+      shortDesc: 'A loan tracker with analytics for monitoring loans, repayments, and insights.',
+      fullDesc: [
+        'Payra is a loan tracker application focused on helping users monitor loans, track repayments, and gain financial insights through analytics. Unlike full lending platforms, Payra simplifies the process by focusing purely on tracking existing loans and visualizing repayment progress.',
+        'The app provides clear dashboards, payment schedules, and analytics charts that show trends in borrowing and repayment behavior. It is designed for individuals or small-scale users who want to keep a clean record of their loan obligations without the complexity of a full lending management system.'
+      ],
+      tech: ['Flutter', 'Dart', 'SQLite'],
+      year: '2026',
+      image: payraLogo,
+      type: 'Client Project',
+      semester: null,
+      previewUrl: null,
+      extraImages: [payra1, payra2, payra3, payra4, payra5, payra6, payra7, payra8, payra9]
+    },
+    {
+      name: 'Personal Portfolio',
+      shortDesc: 'A responsive portfolio showcasing my skills, projects, and experience.',
+      fullDesc: [
+        'My personal portfolio is a web-based platform that showcases my skills, projects, certifications, and experiences as an aspiring web and mobile developer. It is designed with a clean, modern interface that highlights my technical capabilities while maintaining a professional presentation.',
+        'The portfolio is also responsive, ensuring accessibility across different devices such as mobile phones, tablets, and desktops. It serves as a central hub for my work, allowing potential employers or collaborators to easily explore my projects and track my growth as a developer.'
+      ],
+      tech: ['React', 'Vite', 'Tailwind'],
+      year: '2026',
+      image: portfolioimg,
+      type: 'Self Project',
+      semester: null,
+      previewUrl: null,
+      extraImages: []
+    },
+    {
+      name: 'ScanRx',
+      shortDesc: 'A prescription scanning app that retrieves medicine information.',
+      fullDesc: [
+        'ScanRx is a concept-based application aimed at improving healthcare accessibility by allowing users to scan prescriptions and retrieve relevant medicine information. It helps users better understand prescribed medications, reducing confusion and promoting safer usage.',
+        'The system focuses on simplifying complex medical details into user-friendly information. It demonstrates my interest in developing solutions that address real-world problems, particularly in the healthcare space, through the use of technology.'
+      ],
+      tech: ['Kotlin', 'XML'],
+      year: '2026',
+      image: scanrx,
+      type: 'School Final Project',
+      semester: '2nd Year, 2nd Sem',
+      previewUrl: null,
+      extraImages: [scanrx1, scanrx2, scanrx3, scanrx4, scanrx5]
+    },
+    {
+      name: 'MacroMonitor',
+      shortDesc: 'A health app to track macronutrients and support diet management.',
+      fullDesc: [
+        'MacroMonitor is a health-focused application designed to track macronutrients such as carbohydrates, proteins, and fats to support users in managing their diet and overall wellness. It allows users to monitor their daily intake and gain insights into their nutritional habits.',
+        'The application emphasizes data tracking and visualization to help users make informed health decisions. This project showcases my ability to develop systems that combine health awareness with practical digital tools for everyday use.'
+      ],
+      tech: ['PHP', 'MySQL', 'Tailwind', 'JavaScript'],
+      year: '2025',
+      image: macromonitor,
+      type: 'School Final Project',
+      semester: '2nd Year, 1st Sem',
+      previewUrl: null,
+      extraImages: [macromonitor1]
+    },
+    {
+      name: 'Timplang Pinoy',
+      shortDesc: 'A Filipino recipe website showcasing traditional dishes and culture.',
+      fullDesc: [
+        'Timplang Pinoy is a recipe website that promotes Filipino cuisine by showcasing traditional dishes along with their cultural significance. It features categorized recipes, step-by-step guides, and engaging visuals that make it easy for users to explore and learn about local dishes.',
+        'The platform also includes a dedicated culture section that highlights the history and importance of Filipino food traditions. This project reflects my ability to combine web development skills with cultural storytelling, creating both an informative and visually appealing user experience.'
+      ],
+      tech: ['HTML', 'CSS', 'JavaScript'],
+      year: '2025',
+      image: timplangpinoy,
+      type: 'School Final Project',
+      semester: '1st Year, 2nd Sem',
+      previewUrl: null,
+      extraImages: [tp1, tp2, tp3, tp4, tp5, tp6, tp7]
+    },
+    {
+      name: 'UniTask Manager',
+      shortDesc: 'A Java-based task manager to organize daily responsibilities.',
+      fullDesc: [
+        'UniTaskManager is a task management application developed using Java that helps users organize their daily responsibilities, set deadlines, and track task progress efficiently. It provides a structured system for managing workloads in a simple and intuitive interface.',
+        'The project highlights my skills in Java programming and application development, focusing on functionality, usability, and organization. It demonstrates my ability to create productivity tools that support users in staying organized and meeting their goals effectively.'
+      ],
+      tech: ['Java'],
+      year: '2025',
+      image: unitaskmanager,
+      type: 'School Final Project',
+      semester: '1st Year, 2nd Sem',
+      previewUrl: null,
+      extraImages: [unitaskmanager1, unitaskmanager2, unitaskmanager3, unitaskmanager4, unitaskmanager5, unitaskmanager6]
+    },
+    {
+      name: 'Chrono Master',
+      shortDesc: 'A mobile stopwatch and timer app with a user-friendly interface.',
+      fullDesc: [
+        'Chrono Master is a mobile application developed using python that provides stopwatch and timer functionalities in a single, user-friendly interface. The app allows users to easily switch between modes, with visual indicators and dynamic UI changes that improve usability and interaction.',
+        'The project demonstrates my skills in mobile app development, particularly in handling user input, managing time-based functions, and designing responsive interfaces. It highlights my ability to create practical applications that combine functionality with intuitive design on the Android platform.'
+      ],
+      tech: ['Python'],
+      year: '2025',
+      image: chronomaster,
+      type: 'School Final Project',
+      semester: '1st Year, 1st Sem',
+      previewUrl: null,
+      extraImages: [chronomaster1]
+    }
+  ];
 
   const blogSplideOptions = {
     type: 'slide',
@@ -723,139 +766,157 @@ function App() {
               </div>
             </div>
           )}
-             // ==================== PROJECTS PAGE JSX (replace the existing block) ====================
-{activePage === 'projects' && (
-  <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
-    <h1 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>My Projects</h1>
-    <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-      {projects.map((project, idx) => (
-        <div 
-          key={idx} 
-          onClick={() => {
-            setSelectedProject(project);
-            document.body.style.overflow = 'hidden';
-          }}
-          className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] cursor-pointer ${darkMode ? 'bg-gray-700' : 'bg-gray-50'} shadow-lg`}
-        >
-          <div className='h-48 w-full overflow-hidden'>
-            <img 
-              src={project.image} 
-              alt={project.name} 
-              className='w-full h-full object-cover hover:scale-105 transition-transform duration-300'
-            />
-          </div>
-          <div className='p-5'>
-            <div className='flex justify-between items-start mb-3'>
-              <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{project.name}</h2>
-              <span className={`text-xs px-3 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>{project.year}</span>
+
+          {/* PROJECTS PAGE */}
+          {activePage === 'projects' && (
+            <div className={darkMode ? 'bg-gray-800 rounded-xl shadow-lg p-6' : 'bg-white rounded-xl shadow-lg p-6'}>
+              <h1 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>My Projects</h1>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                {projects.map((project, idx) => (
+                  <div 
+                    key={idx}
+                    onClick={() => {
+                      setSelectedProject(project);
+                      document.body.style.overflow = 'hidden';
+                    }}
+                    className={`rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] cursor-pointer ${darkMode ? 'bg-gray-700' : 'bg-gray-50'} shadow-lg`}
+                  >
+                    <div className='h-36 w-full overflow-hidden'>
+                      <img 
+                        src={project.image} 
+                        alt={project.name} 
+                        className='w-full h-full object-cover hover:scale-105 transition-transform duration-300'
+                      />
+                    </div>
+                    <div className='p-5'>
+                      <div className='flex justify-between items-start mb-3'>
+                        <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{project.name}</h2>
+                        <span className={`text-xs px-3 py-1 rounded-full ${darkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'}`}>{project.year}</span>
+                      </div>
+                      <p className={`text-sm mb-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{project.shortDesc}</p>
+                      <div className='flex flex-wrap gap-2 mb-4'>
+                        {project.tech.map((tech, techIdx) => (
+                          <div key={techIdx} className='flex items-center gap-1 px-2 py-1 rounded-lg bg-blue-500/10'>
+                            <img src={getTechLogo(tech)} alt={tech} className='w-4 h-4 object-contain' />
+                            <span className={`text-xs ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{tech}</span>
+                          </div>
+                        ))}
+                      </div>
+                      {/* Only Info button remains */}
+                      <div className='flex gap-3'>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedProject(project);
+                            document.body.style.overflow = 'hidden';
+                          }}
+                          className='flex items-center gap-1 text-sm text-purple-500 hover:text-purple-600 transition-colors'
+                        >
+                          <FaInfoCircle /> Info
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            {/* SHORT DESCRIPTION ON CARD */}
-            <p className={`text-sm mb-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{project.shortDesc}</p>
-            <div className='flex flex-wrap gap-2 mb-4'>
-              {project.tech.map((tech, techIdx) => (
-                <div key={techIdx} className='flex items-center gap-1 px-2 py-1 rounded-lg bg-blue-500/10'>
-                  <img src={getTechLogo(tech)} alt={tech} className='w-4 h-4 object-contain' />
-                  <span className={`text-xs ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{tech}</span>
+          )}
+
+          {/* PROJECT MODAL */}
+          {selectedProject && (
+            <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 md:p-10 bg-black/70 backdrop-blur-sm transition-all duration-300 overflow-y-auto">
+              <div 
+                className={`relative w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl transition-all duration-300 border ${
+                  darkMode ? 'bg-gray-900 text-white border-gray-700' : 'bg-white text-gray-900 border-gray-200'
+                } [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]`}
+              >
+                <div className="sticky top-0 z-10 flex justify-end p-4 bg-inherit">
+                  <button 
+                    onClick={() => {
+                      setSelectedProject(null);
+                      document.body.style.overflow = 'auto';
+                    }}
+                    className={`p-2 rounded-full backdrop-blur-md transition-colors ${
+                      darkMode ? 'bg-gray-800/50 hover:bg-gray-700 text-white' : 'bg-gray-100/50 hover:bg-gray-200 text-gray-900'
+                    }`}
+                  >
+                    <FaTimes size={24} />
+                  </button>
                 </div>
-              ))}
+                <div className="px-6 pb-12 md:px-12">
+                  <div className="w-full h-80 md:h-[32rem] rounded-2xl overflow-hidden mb-8 shadow-inner">
+                    <img src={selectedProject.image} alt={selectedProject.name} className="w-full h-full object-cover" />
+                  </div>
+                  
+                  <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
+                    <h1 className="text-3xl md:text-5xl font-black leading-tight">{selectedProject.name}</h1>
+                    {/* Preview button removed from modal as well */}
+                  </div>
+
+                  <div className="mb-6 p-4 rounded-xl bg-gray-100 dark:bg-gray-800">
+                    <p className="text-xs uppercase tracking-wider opacity-60">{selectedProject.type}</p>
+                    {selectedProject.semester && (
+                      <p className="font-semibold text-lg">{selectedProject.semester}</p>
+                    )}
+                  </div>
+
+                  <div className="mb-8">
+                    <h2 className="text-2xl font-bold mb-3">Project Description</h2>
+                    {selectedProject.fullDesc.map((para, idx) => (
+                      <p key={idx} className={`text-lg leading-relaxed mb-4 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                        {para}
+                      </p>
+                    ))}
+                  </div>
+
+                  {/* Gallery - larger thumbnails with click-to-fullscreen */}
+                  {selectedProject.extraImages && selectedProject.extraImages.length > 0 && (
+                    <div>
+                      <h2 className="text-2xl font-bold mb-4">Project Gallery</h2>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {selectedProject.extraImages.map((img, i) => (
+                          <div 
+                            key={i} 
+                            className="relative group rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-200 cursor-pointer"
+                            onClick={() => setFullscreenImage(img)}
+                          >
+                            <img 
+                              src={img} 
+                              alt={`${selectedProject.name} screenshot ${i+1}`} 
+                              className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 flex items-center justify-center">
+                              <FaExpand className="text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-            <div className='flex gap-3'>
-              <button className='flex items-center gap-1 text-sm text-blue-500 hover:text-blue-600 transition-colors'>
-                <FaGithub /> GitHub
+          )}
+
+          {/* FULLSCREEN IMAGE MODAL */}
+          {fullscreenImage && (
+            <div 
+              className="fixed inset-0 z-[1000] bg-black/95 flex items-center justify-center p-4 cursor-pointer"
+              onClick={() => setFullscreenImage(null)}
+            >
+              <button 
+                className="absolute top-6 right-6 text-white text-3xl hover:scale-110 transition-transform"
+                onClick={() => setFullscreenImage(null)}
+              >
+                <FaTimes />
               </button>
+              <img 
+                src={fullscreenImage} 
+                alt="Fullscreen" 
+                className="max-w-full max-h-full object-contain"
+              />
             </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
-
-// ==================== PROJECT MODAL JSX (replace the existing modal block) ====================
-{selectedProject && (
-  <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 md:p-10 bg-black/70 backdrop-blur-sm transition-all duration-300">
-    <div 
-      className={`relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl transition-all duration-300 border ${
-        darkMode ? 'bg-gray-900 text-white border-gray-700' : 'bg-white text-gray-900 border-gray-200'
-      } [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]`}
-    >
-      <div className="sticky top-0 z-10 flex justify-end p-4 bg-inherit">
-        <button 
-          onClick={() => {
-            setSelectedProject(null);
-            document.body.style.overflow = 'auto';
-          }}
-          className={`p-2 rounded-full backdrop-blur-md transition-colors ${
-            darkMode ? 'bg-gray-800/50 hover:bg-gray-700 text-white' : 'bg-gray-100/50 hover:bg-gray-200 text-gray-900'
-          }`}
-        >
-          <FaTimes size={24} />
-        </button>
-      </div>
-      <div className="px-6 pb-12 md:px-12">
-        {/* Larger main image */}
-        <div className="w-full h-80 md:h-[32rem] rounded-2xl overflow-hidden mb-8 shadow-inner">
-          <img src={selectedProject.image} alt={selectedProject.name} className="w-full h-full object-cover" />
-        </div>
-        
-        {/* Title and preview button */}
-        <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
-          <h1 className="text-3xl md:text-5xl font-black leading-tight">{selectedProject.name}</h1>
-          {selectedProject.previewUrl ? (
-            <a 
-              href={selectedProject.previewUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-5 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition text-sm font-semibold"
-            >
-              Preview
-            </a>
-          ) : (
-            <button 
-              disabled 
-              className="px-5 py-2 rounded-full bg-gray-400 text-white cursor-not-allowed opacity-60 text-sm font-semibold"
-            >
-              No Preview
-            </button>
           )}
-        </div>
-
-        {/* Project type & semester */}
-        <div className="mb-6 p-4 rounded-xl bg-gray-100 dark:bg-gray-800">
-          <p className="text-xs uppercase tracking-wider opacity-60">{selectedProject.type}</p>
-          {selectedProject.semester && (
-            <p className="font-semibold text-lg">{selectedProject.semester}</p>
-          )}
-        </div>
-
-        {/* FULL DESCRIPTION (2 paragraphs) */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-3">Project Description</h2>
-          {selectedProject.fullDesc.map((para, idx) => (
-            <p key={idx} className={`text-lg leading-relaxed mb-4 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-              {para}
-            </p>
-          ))}
-        </div>
-
-        {/* Gallery - only for Monkita */}
-        {selectedProject.extraImages && selectedProject.extraImages.length > 0 && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Project Gallery</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {selectedProject.extraImages.map((img, i) => (
-                <div key={i} className="rounded-xl overflow-hidden shadow-md hover:scale-105 transition-transform">
-                  <img src={img} alt={`${selectedProject.name} screenshot ${i+1}`} className="w-full h-32 object-cover" />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  </div>
-)}
-
 
           {/* ACHIEVEMENTS PAGE */}
           {activePage === 'achievements' && (
@@ -1153,7 +1214,7 @@ function App() {
         {!chatOpen && (
           <button
             onClick={() => setChatOpen(true)}
-            className="bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform active:scale-95 flex items-center gap-2 animate-chat-float"
+            className="bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform active:scale-95 flex items-center gap-2"
           >
             <FaComments size={20}/>
             <span className="hidden md:inline font-medium">Chat with Emerson</span>
